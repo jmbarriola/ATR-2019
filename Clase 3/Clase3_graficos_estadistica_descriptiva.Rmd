@@ -1,0 +1,327 @@
+---
+title: Clase 3
+subtitle: Gráficos y Estadística Descriptiva
+date: "3/5/2019"
+output:
+  html_notebook: 
+    toc: true
+    toc_float: true 
+---
+
+> Reiniciar Sesión
+
+
+#### Cargamos las librerías a utilizar
+```{r}
+library(tidyverse) # tiene ggplot, dplyr, tidyr, y otros
+```
+
+# Estadística Descriptiva
+
+La estadística descriptiva es la rama de la estadística que nos permite describir un conjunto de datos
+
+### Medidas de posición
+#### Promedio
+
+$\bar{x}= \frac{\sum\limits_{i=1}^N x_i}{N} = \frac{ x_1 + x_2+...+x_N}{N}$
+
+#### Moda
+
+Es el valor que más se repite de la variable
+
+Mediana
+Maximo y Mínimo
+Cuantiles 
+
+### Medidas de dispersión
+Rango
+Varianza
+
+## Estadística Descriptiva con Tidyverse
+
+Vamos a trabajar con un conjunto de datos del portal de datos abiertos de Argentina. Es un dataset que contiene información sobre el programa ProHuerta para febrero de 2019 https://datos.gob.ar/dataset/desarrollo-social-programa-prohuerta
+
+```{r}
+#Leemos el archivo
+huertas <- read.csv('/home/juan/ATR-2019/Fuentes/dahuertas2.csv',sep =';', header = TRUE, stringsAsFactors = FALSE)
+# Revisamos la estructura del dataset
+glimpse(huertas)
+```
+
+Vemos que tenemos 8 variables y 516 observaciones. Tenemos informacion de la provincia, el departamento, la cantidad de huertas familiares, escolares y comunitarias e institucionales.
+
+```{r}
+huertas %>% summarise(total_huertas_fam = sum(HUERTAS.FAMILIARES),promedio_huertas_fam = mean(HUERTAS.FAMILIARES), mediana_huertas_fam = median(HUERTAS.FAMILIARES), max_huertas_fam = max(HUERTAS.FAMILIARES), min_huertas_fam = min(HUERTAS.FAMILIARES), rango_huertas_fam = max_huertas_fam -min_huertas_fam, varianza_huertas_fam=var(HUERTAS.FAMILIARES))
+```
+
+```{r}
+huertas %>% group_by(PROVINCIA) %>%
+  summarise(total_huertas_fam = sum(HUERTAS.FAMILIARES),
+            promedio_huertas_fam = mean(HUERTAS.FAMILIARES),
+            mediana_huertas_fam = median(HUERTAS.FAMILIARES),
+            max_huertas_fam = max(HUERTAS.FAMILIARES),
+            min_huertas_fam = min(HUERTAS.FAMILIARES),
+            rango_huertas_fam = max_huertas_fam -min_huertas_fam,
+            varianza_huertas_fam=var(HUERTAS.FAMILIARES))
+```
+
+```{r}
+huertas_expandido <- huertas %>% mutate(huertas_totales = HUERTAS.FAMILIARES + HUERTAS.ESCOLARES + HUERTAS.COMUNITARIAS.E.INSTITUCIONALES,
+                                        porc_huertas_familiares = HUERTAS.FAMILIARES/huertas_totales * 100,
+                                        porc_huertas_escolares = HUERTAS.ESCOLARES/huertas_totales * 100,
+                                        porc_huertas_comunitarias = HUERTAS.COMUNITARIAS.E.INSTITUCIONALES/huertas_totales * 100)
+glimpse(huertas_expandido)
+```
+
+
+# Gráficos Básicos en R
+
+Rbase  tiene algunos comandos genéricos para realizar gráficos, que se adaptan al tipo de información que se le pide graficar, por ejemplo:
+
+- plot()
+- hist()
+
+```{r fig.height=8, fig.width=8}
+# iris es un set de datos clásico, que ya viene incorporado en R
+iris
+plot(iris)
+```
+
+```{r}
+#Al especificar una variable, puedo ver el valor que toma cada uno de sus registros (Index)
+plot(iris$Sepal.Length,type = "p") # Un punto por cada valor
+plot(iris$Sepal.Length,type = "l") # Una linea que una cada valor
+plot(iris$Sepal.Length,type = "b") #Ambas
+hist(iris$Sepal.Length, col = "lightsalmon1", main = "Histograma")
+```
+
+Los gráficos del R base son útiles para escribir de forma rápida y obtener alguna información mientras trabajamos. Muchos paquetes estadísticos permiten mostrar los resultados de forma gráfica con el comando plot (por ejemplo, las regresiones lineales ```lm()```).       
+ 
+Sin embargo, existen librerías mucho mejores para crear gráficos de nivel de publicación. La más importante es __ggplot2__, que a su vez tiene extensiones mediante otras librerías.
+
+
+# [Ggplot2](http://ggplot2.tidyverse.org/reference/)
+
+
+ggplot tiene su sintaxis propia. La idea central es pensar los gráficos como una sucesión de capas, que se construyen una a la vez.    
+
+- El operador __```+```__ nos permite incorporar nuevas capas al gráfico.
+
+- El comando ```ggplot()``` nos permite definir la fuente de __datos__ y las __variables__ que determinaran los ejes del grafico (x,y), así como el color y la forma de las líneas o puntos,etc. 
+
+- Las sucesivas capas nos permiten definir:
+   
+    - Uno o más tipos de gráficos (de columnas, ```geom_col()```, de línea, ```geom_line()```, de puntos,```geom_point()```, boxplot, ```geom_boxplot()```)
+    - Títulos ```labs()```
+    - Estilo del gráfico ```theme()```
+    - Escalas de los ejes ```scale_y_continuous```,```scale_x_discrete``` 
+    - División en subconjuntos ```facet_wrap()```,```facet_grid()```
+
+ggplot tiene __muchos__ comandos, y no tiene sentido saberlos de memoria, es siempre útil reutilizar gráficos viejos y tener a mano el [machete](https://www.rstudio.com/wp-content/uploads/2016/11/ggplot2-cheatsheet-2.1.pdf).    
+
+## Gráfico de Puntos o de Dispersión
+
+A continuación se desplega un gráfico de varias capas de construcción, con su correspondiente porción de código. En el mismo se buscará visualizar, a partir de la base de datos **iris** la relación entre el ancho y el largo de los petalos, mediante un gráfico de puntos o de dispersión
+
+```{r, warning=FALSE}
+ggplot(data = iris, aes(x = Petal.Length, Petal.Width, color = Species))+
+  geom_point(alpha=0.75)+
+  labs(title = "Medidas de los pétalos por especie")+
+  theme(legend.position = 'none')+
+  facet_wrap(~Species)
+
+```
+
+### Capas del Gráfico
+
+Veamos ahora, el "paso a paso" del armado del mismo.          
+
+En primera instancia solo defininimos los ejes. 
+```{r}
+g <- ggplot(data = iris, aes(x = Petal.Length,y= Petal.Width))
+g
+```
+
+Notemos que los ejes tienen los nombres y valores de las variables, pero todavía no hay ningún gráfico. 
+Ahora definimos el tipo de gráfico, en este caso, `geom_point` es un gráfico de puntos o dispersión.
+
+```{r}
+g <- g +  geom_point()
+g
+```  
+
+Sabemos que hay 3 especies distintas en el dataset. Podemos agregar esta variable adicional con el color. Así nos queda un color para cada Especie.
+```{r}
+g <- ggplot(data = iris, aes(x = Petal.Length, Petal.Width, color = Species))  +  geom_point()
+g
+```
+
+Las siguientes tres capas nos permiten respectivamente: 
+ 
+ - Definir el título del gráfico
+ - Quitar la leyenda
+ - Abrir el gráfico en tres fragmentos, uno para cada especie
+
+```{r} 
+g <- g +
+  labs(title = "Medidas de los pétalos por especie")+
+  theme(legend.position = 'none')+
+  facet_wrap(~Species)
+g
+
+```
+
+## Gráfico de barras
+
+Si quisieramos hacer un gráfico de columnas del promedio de las medidas por especie, primero necesitamos hacer una base con los promedios, y luego graficar eso.
+
+```{r}
+iris_promedios <- iris %>% 
+  group_by(Species) %>% 
+  summarise_all(mean)
+
+iris_promedios
+
+ggplot(data = iris_promedios, aes(x = Species, Petal.Width, fill = Species))+
+  geom_col(alpha=0.75)+
+  labs(title = "Ancho promedio del pétalo por especie")+
+  theme(legend.position = 'none')
+
+
+```
+
+con `geom_col()` podemos realizar el gráfico de columnas. 
+
+
+```{r, warning=FALSE, message=FALSE}
+
+Individual_t117 <- read.table("../Fuentes/usu_individual_t117.txt",
+                              sep=";", dec=",", header = TRUE, fill = TRUE)
+
+```
+
+En los gráficos utilizamos extensiones de ggplot: 
+
+- ggrepel ```geom_text_repel()```
+- ggthemes ```theme_tufte()```
+
+simplemente debemos recordar cargar las librerías si queremos utilizar esas funciones.
+
+## Gráficos de distribuciones
+
+Los gráficos hasta aquí realizados (puntos y barras) son fácilmente reproducibles en un excel ya que utilizan la información agregada. Sin embargo, la gran ventaja del **R** se manifiesta a a la hora de realizar:
+
+- Gráficos que necesitan la información a nivel de microdatos. __puntos__,  __boxplots__, __Kernels__, etc.
+- Abrir un mismo gráfico según alguna variable discreta: ```facet_wrap()```
+- Parametrizar otras variables, para aumentar la dimensionalidad del gráficos.
+    - [__color__](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) ```color = ```
+    - __relleno__```fill = ```
+    - __forma__ ```shape = ```
+    - __tamaño__ ```size = ```
+    - __transparencia__ ```alpha = ```
+
+Esto permite tener, en el plano, gráficos de muchas dimensiones de análisis
+
+- Si el color representa una variable lo definimos __dentro del aes()__, ```aes(... color = ingresos)```
+- Cuando queremos simplemente mejorar el diseño (es fijo), se asigna por fuera, o dentro de cada tipo de gráficos, ```geom_col(color = 'green')```.
+
+
+```{r}
+ggplot(huertas_expandido, aes(y=HUERTAS.ESCOLARES, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
+```
+
+```{r}
+ggplot(huertas_expandido, aes(y=porc_huertas_escolares, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
+```
+
+### [__Boxplots__](https://flowingdata.com/2008/02/15/how-to-read-and-use-a-box-and-whisker-plot/) 
+
+- Los gráficos Boxplot representan una única variable (univariados).
+- Están compuestos por una caja, cuyo límite inferior es el valor donde se alcanza el 25% de la distribución
+- Su límite superior es el valor donde se alcanza el 75% de la misma.
+- A su vez, también el gráfico marca los valores "outliers" (datos que se encuentran a una distancia de al menos 1,5 veces el tamaño de la caja del límite inferior o superior de la caja, según corresponda)
+
+#### Boxplot de ingresos de la ocupación principal, según nivel educativo
+
+Hacemos un procesamiento simple: Sacamos los ingresos iguales a cero y las no respuestas de nivel educativo.    
+Es importante que las variables sean del tipo que conceptualmente les corresponde (el nivel educativo es una variable categórica, no continua), para que el ggplot pueda graficarlo correctamente. 
+
+```{r}
+# Las variables sexo( CH04 ) y Nivel educativo están codificadas como números, y el R las entiende como numéricas.
+class(Individual_t117$NIVEL_ED)
+class(Individual_t117$CH04)
+
+ggdata <- Individual_t117 %>% 
+  filter(P21>0, !is.na(NIVEL_ED)) %>% 
+  mutate(NIVEL_ED = as.factor(NIVEL_ED),
+         CH04     = as.factor(CH04))
+```
+
+```{r}
+
+ggplot(ggdata, aes(x = NIVEL_ED, y = P21, fill = NIVEL_ED)) +
+  geom_boxplot()+
+  scale_y_continuous(limits = c(0, 40000))#Restrinjo el gráfico hasta ingresos de $40000
+```
+
+Si queremos agregar la dimensión _sexo_, podemos hacer un ```facet_wrap()```
+
+```{r}
+
+ggplot(ggdata, aes(x= NIVEL_ED, y = P21, group = NIVEL_ED, fill = NIVEL_ED )) +
+  geom_boxplot()+
+  scale_y_continuous(limits = c(0, 40000))+
+  facet_wrap(~ CH04, labeller = "label_both")
+```
+
+Por la forma en que está presentado el gráfico, el foco de atención sigue puesto en las diferencias de ingresos entre niveles educativo. Simplemente se agrega un corte por la variable de sexo.
+
+Si lo que queremos hacer es poner el foco de atención en las diferencias por sexo, simplemente basta con invertir la variable x especificada con la variable utilizada en el ```facet_wrap```
+
+
+```{r}
+ggplot(ggdata, aes(x= CH04, y = P21, group = CH04, fill = CH04 )) +
+  geom_boxplot()+
+  scale_y_continuous(limits = c(0, 40000))+
+  facet_grid(~ NIVEL_ED, labeller = "label_both") +
+  theme(legend.position = "none")
+
+```
+
+### [Histogramas](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
+
+Otra forma de mostrar la distribución de una variable es utilizar un histograma. Este tipo de gráficos agrupa las observaciones en __bins__: intervalos dentro del rango de la variable. Luego cuenta la cantidad de observaciones que caen dentro de cada uno de estos bins.
+
+Por ejemplo, si observamos el ingreso de la ocupación principal:
+
+```{r warning=FALSE}
+hist_data <-Individual_t117 %>%
+  filter(P21>0) 
+
+ggplot(hist_data, aes(x = P21,weights = PONDIIO))+ 
+geom_histogram(col = "grey")+
+scale_x_continuous(limits = c(0,50000))
+```
+
+En este gráfico, los posibles valores de p21 se dividen en 30 __bins__ consecutivos y el gráfico muestra cuantas observaciones caen en cada uno de ellos
+
+
+
+# Ejercicios para practicar
+* Calcular el promedio del ingreso por ocupación principal (Variable **P21**)  para  **asalariados** con y sin **descuento jubilatorio** (Variable **PP07H**). Luego realizar un gráfico de barras donde se comparen ambos valores (para el 1er trimestre de 2017).                   
+  Pistas: Se deben filtrar previamente los ingresos mayores a 0 (**P21>0**).Chequear que ponderador corresponde utilizar           
+               
+- Graficar la distribución del ingreso por ocupación principal para Asalariados, Cuentapropistas y Patrones, con el tipo de gráfico Kernel                 
+   Pista: Usar la función **facet_wrap** para separar a cada una de las categorías ocupacionales)                
+   Sugerencia: incorporar la línea ``` scale_x_continuous(limits = c(0,50000)) ``` entre las capas del gráfico. ¿Qué cambió?
+
+
+
+# Ejercicios de tarea
+
+- Hacer un gráfico boxplot de la distribución de edades de los asalariados con descuento jubilatorio, y de los asalariados sin descuento jubilatorio.
+
+- Uniendo las bases de los distintos trimestres, calcular el procentaje de asalariados sin descuento jubilatorio como $\frac{Asal. s/ desc jubil}{Asal. c/ desc jubil+ Asal.s/ desc jubil}$. Luego realizar un gráfico de linea con la evolución de este indicador
+
+
+
