@@ -10,7 +10,6 @@ output:
 
 > Reiniciar Sesión
 
-
 #### Cargamos las librerías a utilizar
 ```{r}
 library(tidyverse) # tiene ggplot, dplyr, tidyr, y otros
@@ -64,9 +63,26 @@ Si ordenamos los datos de menor a mayor, la *mediana* es aquel valor que separa 
 2) Si la cantidad de datos es par, la mediana es igual al promedio de los datos en las posiciones $\frac{n}{2}$ y $\frac{n+1}{2}$
 
 ```{r}
+# Calculemos cuantos elementos tiene nuestra variable
+elementos_estaturas <- length(estaturas)
+elementos_estaturas
 
+# Tenemos 15 elementos (es una cantidad impar), busquemos en que posicion se encuentra la mediana
+posicion_mediana_estatura <- (elementos_estaturas + 1)/2
+posicion_mediana_estatura
+
+# La mediana esta en la posicion 8, como nuestro vector ya esta ordenado de menor a mayor accedemos al dato en esa posicion
+mediana_estaturas <- estaturas[posicion_mediana_estatura]
+mediana_estaturas
+```
+
+El comando de esta medida estadistica es `median()`
+
+```{r}
+# Mediana de la variable estatura
 median(estaturas)
 
+# Mediana de la variable estatura_2
 median(estaturas_2)
 ```
 
