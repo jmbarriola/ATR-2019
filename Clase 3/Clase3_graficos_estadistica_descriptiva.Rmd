@@ -1,5 +1,6 @@
 ---
 title: Clase 3
+author: "Barriola, Dotta y Weskler"
 subtitle: Gráficos y Estadística Descriptiva
 date: "3/5/2019"
 output:
@@ -7,6 +8,14 @@ output:
     toc: true
     toc_float: true 
 ---
+<style type="text/css">
+div.main-container {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
 
 > Reiniciar Sesión
 
@@ -17,16 +26,20 @@ library(tidyverse) # tiene ggplot, dplyr, tidyr, y otros
 
 # Estadística Descriptiva
 
-La estadística descriptiva es la rama de la estadística que nos permite describir un conjunto de datos. En este caso vamos a ver algunas medidas estadisticas que nos permiten describir el comportamiento de una variable.
+La estadística descriptiva es la rama de la estadística que nos permite describir un conjunto de datos. Esto se puede realizar analizando una variable por vez: **analisis univariado** o analizando las relaciones entre 2 o mas variables: **analisis multivariado**.
+Para realizar esta tarea se usan medidas estadisticas y graficos. A continuacion, vamos a trabajar sobre ambas herramientas 
+
+## Medidas de resumen
+Estas medidas nos permiten describir el comportamiento de una variable conociendo distintas caracteristicas de ella 
 
 Vamos a crear dos conjuntos de datos para ir aplucando cada una de estas medidas:
 
 ```{r}
 # Estaturas de asistentes del curso
-estaturas <- c(1.60, 1.63, 1.68, 1.69, 1.70, 1.72, 1.72, 1.73, 1.74, 1.76, 1.78, 1.81, 1.83, 1.84, 1.85)
+estaturas_1 <- c(1.60, 1.63, 1.68, 1.69, 1.70, 1.72, 1.72, 1.73, 1.74, 1.76, 1.78, 1.81, 1.83, 1.84, 1.85)
 
-# Estaturas de asistentes del curso con un jugador de basquet
-estaturas_2 <- c(estaturas, 2.19)
+# Estaturas de asistentes del curso agregando un jugador de basquet
+estaturas_2 <- c(estaturas_1, 2.19)
 ```
 
 ### Medidas de tendencia central
@@ -40,20 +53,55 @@ $\bar{x}= \frac{\sum\limits_{i=1}^N x_i}{N} = \frac{ x_1 + x_2+...+x_N}{N}$
 La cuenta implica sumar todos los valores de la variable y luego dividir por la cantidad de observaciones
 
 ```{r}
+# Calculemos la suma de las estaturas de la primera variable
+suma_estaturas_1 <- sum(estaturas_1)
+suma_estaturas_1
 
-promedio_estaturas_1 <- sum(estaturas)/length(estaturas)
+# Calculemos cuantos elementos tiene nuestra variable
+observaciones_estaturas_1 <- length(estaturas_1)
+observaciones_estaturas_1
+
+# Calculemos el promedio
+promedio_estaturas_1 <- suma_estaturas_1/observaciones_estaturas_1
 promedio_estaturas_1
-
-mean(estaturas)
-
-mean(estaturas_2)
-
 ```
 
+El comando de esta medida estadistica es `mean()`
+
+```{r}
+# Calculamos el promedio de variable estaturas_1
+mean(estaturas_1)
+# Calculamos el promedio de variable estaturas_2
+mean(estaturas_2)
+```
+
+Notemos que el promedio difiere por casi 3 cm entre ambas variables. Esto se debe a que el promedio es una medida **sensible a outliers**.
+
+Un **outlier** es una observacion con un valor atipico de la variable. En este caso, una estatura de 2.19 metros es un valor atipico para la variable estatura de un grupo de personas que asisten al curso.
+
+Entonces el promedio, por su formula de calculo, cambia bastante su valor cuando hay valores atipicos (outliers) en nuestra variable. Por eso hay que tener cuidado cuando lo calculamos y detectar si es que existen outliers.
+
+**VENTAJA**
+
+El **promedio** es una medida bastante conocida y sencilla de interpretar
+
+**DESVENTAJA**
+
+El **promedio** es una medida sensible a outliers
 
 #### Moda
 
-Es el valor que más se repite de la variable
+Es el valor que más se repite de la variable. R no dispone de una función base para calcular la moda, aunque hay librerías que si la tienen.
+
+En el caso de nuestras dos variables la moda es 1.72
+
+**VENTAJA**
+
+La **moda** es una medida sencilla de interpretar
+
+**DESVENTAJA**
+
+La **moda** no es una medida muy util ni utilizada
 
 #### Mediana
 
@@ -64,66 +112,149 @@ Si ordenamos los datos de menor a mayor, la *mediana* es aquel valor que separa 
 
 ```{r}
 # Calculemos cuantos elementos tiene nuestra variable
-elementos_estaturas <- length(estaturas)
-elementos_estaturas
+observaciones_estaturas_1 <- length(estaturas_1)
+observaciones_estaturas_1
 
 # Tenemos 15 elementos (es una cantidad impar), busquemos en que posicion se encuentra la mediana
-posicion_mediana_estatura <- (elementos_estaturas + 1)/2
-posicion_mediana_estatura
+posicion_mediana_estatura_1 <- (observaciones_estaturas_1 + 1)/2
+posicion_mediana_estatura_1
 
 # La mediana esta en la posicion 8, como nuestro vector ya esta ordenado de menor a mayor accedemos al dato en esa posicion
-mediana_estaturas <- estaturas[posicion_mediana_estatura]
-mediana_estaturas
+mediana_estaturas_1 <- estaturas_1[posicion_mediana_estatura]
+mediana_estaturas_1
 ```
 
 El comando de esta medida estadistica es `median()`
 
 ```{r}
 # Mediana de la variable estatura
-median(estaturas)
+median(estaturas_1)
 
 # Mediana de la variable estatura_2
 median(estaturas_2)
 ```
 
+Notemos que a pesar de la presencia del dato atipico de la estatura del jugador de basquet, la mediana cambia muy poco. Esto sucede porque la mediana depende de la posicion de los observaciones y no de los valores de las mismas.
+
+**VENTAJA**
+
+La **mediana** es una medida no sensible a outliers
+
+**DESVENTAJA**
+
+La **mediana** es una medida menos conocida.
 
 ### Medidas de posición
 
-Las medidas de posicion son aquellas que nos permiten conocer ciertos puntos (posiciones) de la variable
+Las medidas de posicion son aquellas que nos permiten conocer ciertos puntos (posiciones) de la variable ordenada de mayor a menor.
+Ya hemos visto una medida de posición: la **mediana** es una medida de posición ya que se encuentra en la mitad de los datos.
 
 #### Maximo y Mínimo
 
-El maximo es el mayor valor que toma la variable
+El maximo es el mayor valor que toma la variable. El comando de esta medida estadistica es `max()`
 
 ```{r}
-max(estaturas)
-
-max(estaturas_2)
+# Maximo de la variable estaturas_1
+maximo_estaturas_1 <- max(estaturas_1)
+# Maximo de la variable estaturas_2
+maximo_estaturas_2 <- max(estaturas_2)
 ```
 
-El minimo es el menor valor que toma la variable 
+El minimo es el menor valor que toma la variable. El comando de esta medida estadistica es `min()`
 
 ```{r}
-min(estaturas)
-
-min(estaturas_2)
+# Minimo de la variable estaturas_1
+minimo_estaturas_1 <- min(estaturas_1)
+# Minimo de la variable estaturas_2
+minimo_estaturas_2 <- min(estaturas_2)
 ```
 
 #### Cuantiles 
 
-Son ciertos valores del rango del conjunto de observaciones ordenadas que permiten subdividirlo en partes iguales 
+Son ciertos valores del conjunto de observaciones de la variable ordenada que permiten subdividirlas en partes iguales. Los cuantiles mas conocidos son:
+
+* **Mediana**: divide a las observaciones de la variable en 2 partes iguales (50% a izquierda y 50% a derecha de la mediana)
+* **Cuartiles**: dividen a las observaciones en 4 partes iguales: el primer cuartil deja a izquierda el 25% de las observaciones (75% a la derecha), el segundo cuartil es la mediana (deja 50% a izquierda y 50% a derecha) y el tercer cuartil deja deja a izquierda el 75% de las observaciones (25% a la derecha)
+* **Deciles**: dividen a las observaciones en 10 partes iguales: el primer decil deja a izquierda el 10% de las observaciones (90% a derecha)
+* **Percentiles**: dividen a las observaciones en 100 partes iguales: el primer percentil deja a izquierda el 1% de las observaciones (99% a derecha)
+
+El comando de esta medida estadistica es `quantile()`. Toma como primer argumento la variable y el segundo argumento es el porcentaje de observaciones que quedan a izquierda.
+
+```{r}
+# Calculamos el primer cuartil de estaturas 1. Entonces indicamos que deben quedar 25% de los datos a izquierda.
+quantile(estaturas_1, 0.25)
+# Calculamos el primer cuartil de estaturas 2. Entonces indicamos que deben quedar 25% de los datos a izquierda.
+quantile(estaturas_2, 0.25)
+
+# Calculamos el septimo decil de estaturas 1. Entonces indicamos que deben quedar 70% de los datos a izquierda.
+quantile(estaturas_1, 0.70)
+# Calculamos el septimo decil de estaturas 2. Entonces indicamos que deben quedar 70% de los datos a izquierda.
+quantile(estaturas_2, 0.70)
+
+# Calculamos el percentil 17 de estaturas 1. Entonces indicamos que deben quedar 17% de los datos a izquierda.
+quantile(estaturas_1, 0.17)
+# Calculamos el percentil 17 de estaturas 2. Entonces indicamos que deben quedar 17% de los datos a izquierda.
+quantile(estaturas_2, 0.17)
+
+```
 
 ### Medidas de dispersión
 
 #### Rango
 
-Es la diferencia entre el valor maximo y minimo
+Es la diferencia entre el valor maximo y minimo.
 
-Varianza
+```{r}
+# Calculamos el rango de estaturas 1
+rango_estaturas_1 <- maximo_estaturas_1 - minimo_estaturas_1
+rango_estaturas_1
+
+# Calculamos el rango de estaturas 2
+rango_estaturas_2 <- maximo_estaturas_2 - minimo_estaturas_2
+rango_estaturas_2
+```
+
+El comando `range()` nos devuelve el minimo y maximo de nuestra variable y no la diferencia entre ellos
+
+```{r}
+range(estaturas_1)
+```
+
+#### Varianza
+
+Es una medida que permite analizar la variabilidad de nuestra variable. Su formula es: 
+
+$s_x= \frac{1}{N} \sum\limits_{i=1}^N (x_i-\bar{x})^2$
+
+A cada observacion se le resta el promedio y luego se eleva al cuadrado para siempre sea positivo. Luego se suman todos esos valores y se dividen por la cantidad de observaciones.
+
+Si tenemos un conjunto de observaciones muy cercanas al promedio, la varianza va a ser pequeña y cercana a cero. En cambio, si tenemos un conjunto de observaciones que son estan lejos del promedio, la varianza va a ser muy grande.
+
+El comando de esta medida estadistica es `var()`.
+```{r}
+# Varianza de estatura 1
+varianza_estaturas_1 <- var(estaturas_1)
+varianza_estaturas_1
+# Varianza de estatura 2
+varianza_estaturas_2 <- var(estaturas_2)
+varianza_estaturas_2
+```
+
+La interpretacion de la varianza depende de las unidad en la cual esta medida la variable
+```{r}
+# Varianza de estatura 1
+varianza_estaturas_1
+
+var(estaturas_1*100)
+```
+
+Entonces es una medida util para comparar la variabilidad/dispersion de variables que estan medidas en la misma unidad, como por ejemplo la estatura medida en metros, los sueldos medidos en pesos. No tiene sentido comparar la varianza entre varaibles que esten medidas en distintas unidades.
 
 ## Estadística Descriptiva con Tidyverse
 
-Vamos a trabajar con un conjunto de datos del portal de datos abiertos de Argentina. Es un dataset que contiene información sobre el programa ProHuerta para febrero de 2019 https://datos.gob.ar/dataset/desarrollo-social-programa-prohuerta
+Vamos a utilizar las medidas de resumen que vimos junto a las funciones de Tidyverse.
+
+Trabajaremos con un conjunto de datos del portal de datos abiertos de Argentina. Es un dataset que contiene información sobre el programa ProHuerta para febrero de 2019 https://datos.gob.ar/dataset/desarrollo-social-programa-prohuerta
 
 ```{r}
 #Leemos el archivo
@@ -134,20 +265,51 @@ glimpse(huertas)
 
 Vemos que tenemos 8 variables y 516 observaciones. Tenemos informacion de la provincia, el departamento, la cantidad de huertas familiares, escolares y comunitarias e institucionales.
 
-```{r}
-huertas %>% summarise(total_huertas_fam = sum(HUERTAS.FAMILIARES),promedio_huertas_fam = mean(HUERTAS.FAMILIARES), mediana_huertas_fam = median(HUERTAS.FAMILIARES), max_huertas_fam = max(HUERTAS.FAMILIARES), min_huertas_fam = min(HUERTAS.FAMILIARES), rango_huertas_fam = max_huertas_fam -min_huertas_fam, varianza_huertas_fam=var(HUERTAS.FAMILIARES))
-```
+Cada observacion es un departamento en Argentina.
+
+Supongamos que estamos somos un grupo de analistas que nos interesa analizar el comportamiento de la variable **huertas escolares**.
+Utilizamos el comando `summarise()` para obtener distintas medidas de resumen sobre la variable de interes:
 
 ```{r}
-huertas %>% group_by(PROVINCIA) %>%
-  summarise(total_huertas_fam = sum(HUERTAS.FAMILIARES),
-            promedio_huertas_fam = mean(HUERTAS.FAMILIARES),
-            mediana_huertas_fam = median(HUERTAS.FAMILIARES),
-            max_huertas_fam = max(HUERTAS.FAMILIARES),
-            min_huertas_fam = min(HUERTAS.FAMILIARES),
-            rango_huertas_fam = max_huertas_fam -min_huertas_fam,
-            varianza_huertas_fam=var(HUERTAS.FAMILIARES))
+resumen_huertas_escolares <- huertas %>% summarise(total_huertas_esc = sum(HUERTAS.ESCOLARES), # total de huertas escolares
+                                                   promedio_huertas_esc = mean(HUERTAS.ESCOLARES), # promedio de huertas escolares
+                                                   mediana_huertas_esc = median(HUERTAS.ESCOLARES),  # mediana de huertas escolares
+                                                   max_huertas_esc = max(HUERTAS.ESCOLARES), # maximo de huertas escolares
+                                                   min_huertas_esc = min(HUERTAS.ESCOLARES), # minimo de huertas escolares
+                                                   rango_huertas_esc = max_huertas_esc -min_huertas_esc, # rango de huertas escolares
+                                                   varianza_huertas_esc = var(HUERTAS.ESCOLARES)) # varianza de huertas escolares
+
+resumen_huertas_escolares
 ```
+
+Con esto podemos contestar, entre otras preguntas:
+
+* ¿Cuántas huertas escolares hay en el país? 
+* ¿Cuántas huertas escolares hay en promedio en los departamentos del país?
+* ¿Cuál es la mayor cantidad de huertas escolares entre todos los departamentos del país? ¿Y la menor?
+
+Ahora queremos profundizar en nuestro análisis y calcular las medidas de resumen anteriores para cada provincia:
+
+```{r}
+resumen_prov_huertas_escolares <- huertas %>% group_by(PROVINCIA) %>% 
+  summarise(cantidad_distritos = n(), # cantidad de departamentos en el programa
+            total_huertas_esc = sum(HUERTAS.ESCOLARES), # total de huertas escolares
+            promedio_huertas_esc = mean(HUERTAS.ESCOLARES), # promedio de huertas escolares
+            mediana_huertas_esc = median(HUERTAS.ESCOLARES),  # mediana de huertas escolares
+            max_huertas_esc = max(HUERTAS.ESCOLARES), # maximo de huertas escolares
+            min_huertas_esc = min(HUERTAS.ESCOLARES), # minimo de huertas escolares
+            rango_huertas_esc = max_huertas_esc -min_huertas_esc, # rango de huertas escolares
+            varianza_huertas_esc = var(HUERTAS.ESCOLARES)) # varianza de huertas escolares
+
+resumen_prov_huertas_escolares
+```
+
+Ahora podemos contestar las siguientes preguntas:
+
+* ¿Cuáles son las 3 provincias con mayor cantidad de huertas escolares? ¿Y las 3 con menor cantidad?
+* ¿Cuál es la provincia qué, en promedio, tiene mayor cantidad de huertas? ¿Y la que menos tiene?
+* ¿Qué provincia tiene el distrito con mayor cantidad de huertas escolares?
+* ¿Cuáles provincias no tienen distritos sin huertas escolares?
 
 ```{r}
 huertas_expandido <- huertas %>% mutate(huertas_totales = HUERTAS.FAMILIARES + HUERTAS.ESCOLARES + HUERTAS.COMUNITARIAS.E.INSTITUCIONALES,
@@ -157,8 +319,9 @@ huertas_expandido <- huertas %>% mutate(huertas_totales = HUERTAS.FAMILIARES + H
 glimpse(huertas_expandido)
 ```
 
+# Gráficos
 
-# Gráficos Básicos en R
+## Gráficos Básicos en R
 
 Rbase  tiene algunos comandos genéricos para realizar gráficos, que se adaptan al tipo de información que se le pide graficar, por ejemplo:
 
@@ -315,7 +478,7 @@ ggplot(huertas_expandido, aes(y=HUERTAS.ESCOLARES, x=PROVINCIA, fill = PROVINCIA
 ```
 
 ```{r}
-ggplot(huertas_expandido, aes(y=porc_huertas_escolares, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
+ggplot(huertas_expandido, aes(y=porc_huertas_familiares, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
 ```
 
 ### [__Boxplots__](https://flowingdata.com/2008/02/15/how-to-read-and-use-a-box-and-whisker-plot/) 
