@@ -120,7 +120,7 @@ posicion_mediana_estatura_1 <- (observaciones_estaturas_1 + 1)/2
 posicion_mediana_estatura_1
 
 # La mediana esta en la posicion 8, como nuestro vector ya esta ordenado de menor a mayor accedemos al dato en esa posicion
-mediana_estaturas_1 <- estaturas_1[posicion_mediana_estatura]
+mediana_estaturas_1 <- estaturas_1[posicion_mediana_estatura_1]
 mediana_estaturas_1
 ```
 
@@ -267,6 +267,8 @@ Vemos que tenemos 8 variables y 516 observaciones. Tenemos informacion de la pro
 
 Cada observacion es un departamento en Argentina.
 
+#### Medidas de resumen generales
+
 Supongamos que estamos somos un grupo de analistas que nos interesa analizar el comportamiento de la variable **huertas escolares**.
 Utilizamos el comando `summarise()` para obtener distintas medidas de resumen sobre la variable de interes:
 
@@ -287,6 +289,8 @@ Con esto podemos contestar, entre otras preguntas:
 * ¿Cuántas huertas escolares hay en el país? 
 * ¿Cuántas huertas escolares hay en promedio en los departamentos del país?
 * ¿Cuál es la mayor cantidad de huertas escolares entre todos los departamentos del país? ¿Y la menor?
+
+#### Medidas de resumen por provincia 
 
 Ahora queremos profundizar en nuestro análisis y calcular las medidas de resumen anteriores para cada provincia:
 
@@ -311,6 +315,8 @@ Ahora podemos contestar las siguientes preguntas:
 * ¿Qué provincia tiene el distrito con mayor cantidad de huertas escolares?
 * ¿Cuáles provincias no tienen distritos sin huertas escolares?
 
+#### Dataset expandido
+
 ```{r}
 huertas_expandido <- huertas %>% mutate(huertas_totales = HUERTAS.FAMILIARES + HUERTAS.ESCOLARES + HUERTAS.COMUNITARIAS.E.INSTITUCIONALES,
                                         porc_huertas_familiares = HUERTAS.FAMILIARES/huertas_totales * 100,
@@ -320,6 +326,8 @@ glimpse(huertas_expandido)
 ```
 
 # Gráficos
+
+Son muy utilizados para visualizar una o mas variables de los conjuntos de datos.  
 
 ## Gráficos Básicos en R
 
@@ -347,8 +355,7 @@ Los gráficos del R base son útiles para escribir de forma rápida y obtener al
 Sin embargo, existen librerías mucho mejores para crear gráficos de nivel de publicación. La más importante es __ggplot2__, que a su vez tiene extensiones mediante otras librerías.
 
 
-# [Ggplot2](http://ggplot2.tidyverse.org/reference/)
-
+## [Ggplot2](http://ggplot2.tidyverse.org/reference/)
 
 ggplot tiene su sintaxis propia. La idea central es pensar los gráficos como una sucesión de capas, que se construyen una a la vez.    
 
@@ -368,14 +375,14 @@ ggplot tiene __muchos__ comandos, y no tiene sentido saberlos de memoria, es sie
 
 ## Gráfico de Puntos o de Dispersión
 
-A continuación se desplega un gráfico de varias capas de construcción, con su correspondiente porción de código. En el mismo se buscará visualizar, a partir de la base de datos **iris** la relación entre el ancho y el largo de los petalos, mediante un gráfico de puntos o de dispersión
+A continuación veremos un gráfico de varias capas de construcción, con su correspondiente porción de código. En el mismo buscaremos visualizar, a partir de la base de datos **iris** la relación entre el ancho y el largo de los petalos, mediante un gráfico de puntos o de dispersión
 
 ```{r, warning=FALSE}
-ggplot(data = iris, aes(x = Petal.Length, Petal.Width, color = Species))+
-  geom_point(alpha=0.75)+
-  labs(title = "Medidas de los pétalos por especie")+
-  theme(legend.position = 'none')+
-  facet_wrap(~Species)
+ggplot(data = iris, aes(x = Petal.Length, Petal.Width, color = Species))+ #Datos y variables
+  geom_point()+ # Tipo de grafico
+  labs(title = "Medidas de los pétalos por especie")+ #Titulo
+  theme(legend.position = 'none')+ #Eliminar la leyenda
+  facet_wrap(~Species) # Dividir por la especie
 
 ```
 
@@ -398,6 +405,7 @@ g
 ```  
 
 Sabemos que hay 3 especies distintas en el dataset. Podemos agregar esta variable adicional con el color. Así nos queda un color para cada Especie.
+
 ```{r}
 g <- ggplot(data = iris, aes(x = Petal.Length, Petal.Width, color = Species))  +  geom_point()
 g
@@ -422,6 +430,8 @@ g
 
 Si quisieramos hacer un gráfico de columnas del promedio de las medidas por especie, primero necesitamos hacer una base con los promedios, y luego graficar eso.
 
+Con `geom_col()` podemos realizar el gráfico de columnas. 
+
 ```{r}
 iris_promedios <- iris %>% 
   group_by(Species) %>% 
@@ -430,29 +440,12 @@ iris_promedios <- iris %>%
 iris_promedios
 
 ggplot(data = iris_promedios, aes(x = Species, Petal.Width, fill = Species))+
-  geom_col(alpha=0.75)+
+  geom_col()+
   labs(title = "Ancho promedio del pétalo por especie")+
   theme(legend.position = 'none')
 
 
 ```
-
-con `geom_col()` podemos realizar el gráfico de columnas. 
-
-
-```{r, warning=FALSE, message=FALSE}
-
-Individual_t117 <- read.table("../Fuentes/usu_individual_t117.txt",
-                              sep=";", dec=",", header = TRUE, fill = TRUE)
-
-```
-
-En los gráficos utilizamos extensiones de ggplot: 
-
-- ggrepel ```geom_text_repel()```
-- ggthemes ```theme_tufte()```
-
-simplemente debemos recordar cargar las librerías si queremos utilizar esas funciones.
 
 ## Gráficos de distribuciones
 
@@ -473,13 +466,6 @@ Esto permite tener, en el plano, gráficos de muchas dimensiones de análisis
 - Cuando queremos simplemente mejorar el diseño (es fijo), se asigna por fuera, o dentro de cada tipo de gráficos, ```geom_col(color = 'green')```.
 
 
-```{r}
-ggplot(huertas_expandido, aes(y=HUERTAS.ESCOLARES, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
-```
-
-```{r}
-ggplot(huertas_expandido, aes(y=porc_huertas_familiares, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
-```
 
 ### [__Boxplots__](https://flowingdata.com/2008/02/15/how-to-read-and-use-a-box-and-whisker-plot/) 
 
@@ -488,51 +474,16 @@ ggplot(huertas_expandido, aes(y=porc_huertas_familiares, x=PROVINCIA, fill = PRO
 - Su límite superior es el valor donde se alcanza el 75% de la misma.
 - A su vez, también el gráfico marca los valores "outliers" (datos que se encuentran a una distancia de al menos 1,5 veces el tamaño de la caja del límite inferior o superior de la caja, según corresponda)
 
-#### Boxplot de ingresos de la ocupación principal, según nivel educativo
-
-Hacemos un procesamiento simple: Sacamos los ingresos iguales a cero y las no respuestas de nivel educativo.    
-Es importante que las variables sean del tipo que conceptualmente les corresponde (el nivel educativo es una variable categórica, no continua), para que el ggplot pueda graficarlo correctamente. 
 
 ```{r}
-# Las variables sexo( CH04 ) y Nivel educativo están codificadas como números, y el R las entiende como numéricas.
-class(Individual_t117$NIVEL_ED)
-class(Individual_t117$CH04)
-
-ggdata <- Individual_t117 %>% 
-  filter(P21>0, !is.na(NIVEL_ED)) %>% 
-  mutate(NIVEL_ED = as.factor(NIVEL_ED),
-         CH04     = as.factor(CH04))
+ggplot(huertas_expandido, aes(y=HUERTAS.ESCOLARES, x=PROVINCIA, fill = PROVINCIA)) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
 ```
 
 ```{r}
-
-ggplot(ggdata, aes(x = NIVEL_ED, y = P21, fill = NIVEL_ED)) +
-  geom_boxplot()+
-  scale_y_continuous(limits = c(0, 40000))#Restrinjo el gráfico hasta ingresos de $40000
-```
-
-Si queremos agregar la dimensión _sexo_, podemos hacer un ```facet_wrap()```
-
-```{r}
-
-ggplot(ggdata, aes(x= NIVEL_ED, y = P21, group = NIVEL_ED, fill = NIVEL_ED )) +
-  geom_boxplot()+
-  scale_y_continuous(limits = c(0, 40000))+
-  facet_wrap(~ CH04, labeller = "label_both")
-```
-
-Por la forma en que está presentado el gráfico, el foco de atención sigue puesto en las diferencias de ingresos entre niveles educativo. Simplemente se agrega un corte por la variable de sexo.
-
-Si lo que queremos hacer es poner el foco de atención en las diferencias por sexo, simplemente basta con invertir la variable x especificada con la variable utilizada en el ```facet_wrap```
-
-
-```{r}
-ggplot(ggdata, aes(x= CH04, y = P21, group = CH04, fill = CH04 )) +
-  geom_boxplot()+
-  scale_y_continuous(limits = c(0, 40000))+
-  facet_grid(~ NIVEL_ED, labeller = "label_both") +
-  theme(legend.position = "none")
-
+ggplot(huertas_expandido, aes(y=porc_huertas_escolares, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
 ```
 
 ### [Histogramas](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
