@@ -449,7 +449,7 @@ ggplot(data = iris_promedios, aes(x = Species, Petal.Width, fill = Species))+
 
 ## Gráficos de distribuciones
 
-Los gráficos hasta aquí realizados (puntos y barras) son fácilmente reproducibles en un excel ya que utilizan la información agregada. Sin embargo, la gran ventaja del **R** se manifiesta a a la hora de realizar:
+Los gráficos hasta aquí realizados (puntos y barras) son fácilmente reproducibles en un excel. Sin embargo, la gran ventaja del **R** se manifiesta a a la hora de realizar:
 
 - Gráficos que necesitan la información a nivel de microdatos. __puntos__,  __boxplots__, __Kernels__, etc.
 - Abrir un mismo gráfico según alguna variable discreta: ```facet_wrap()```
@@ -466,7 +466,6 @@ Esto permite tener, en el plano, gráficos de muchas dimensiones de análisis
 - Cuando queremos simplemente mejorar el diseño (es fijo), se asigna por fuera, o dentro de cada tipo de gráficos, ```geom_col(color = 'green')```.
 
 
-
 ### [__Boxplots__](https://flowingdata.com/2008/02/15/how-to-read-and-use-a-box-and-whisker-plot/) 
 
 - Los gráficos Boxplot representan una única variable (univariados).
@@ -475,6 +474,8 @@ Esto permite tener, en el plano, gráficos de muchas dimensiones de análisis
 - A su vez, también el gráfico marca los valores "outliers" (datos que se encuentran a una distancia de al menos 1,5 veces el tamaño de la caja del límite inferior o superior de la caja, según corresponda)
 
 
+Veamos un gráfico de boxplot para la cantidad de huertas escolares por provincia:
+
 ```{r}
 ggplot(huertas_expandido, aes(y=HUERTAS.ESCOLARES, x=PROVINCIA, fill = PROVINCIA)) +
   geom_boxplot() +
@@ -482,44 +483,76 @@ ggplot(huertas_expandido, aes(y=HUERTAS.ESCOLARES, x=PROVINCIA, fill = PROVINCIA
   theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
 ```
 
-```{r}
-ggplot(huertas_expandido, aes(y=porc_huertas_escolares, x=PROVINCIA, fill = PROVINCIA)) + geom_boxplot() + theme_bw() + theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) 
-```
 
 ### [Histogramas](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
 
 Otra forma de mostrar la distribución de una variable es utilizar un histograma. Este tipo de gráficos agrupa las observaciones en __bins__: intervalos dentro del rango de la variable. Luego cuenta la cantidad de observaciones que caen dentro de cada uno de estos bins.
 
-Por ejemplo, si observamos el ingreso de la ocupación principal:
+Por ejemplo, si observamos la cantidad de huertas escolares:
 
 ```{r warning=FALSE}
-hist_data <-Individual_t117 %>%
-  filter(P21>0) 
-
-ggplot(hist_data, aes(x = P21,weights = PONDIIO))+ 
-geom_histogram(col = "grey")+
-scale_x_continuous(limits = c(0,50000))
+ggplot(huertas, aes(x = HUERTAS.ESCOLARES))+ 
+  geom_histogram(color='black',fill="forestgreen") +
+  theme_bw() +
+  labs(title='Histograma huertas escolares')
+  
 ```
 
-En este gráfico, los posibles valores de p21 se dividen en 30 __bins__ consecutivos y el gráfico muestra cuantas observaciones caen en cada uno de ellos
+En este gráfico, los posibles valores de huertas escolares se dividen en 30 __bins__ consecutivos y el gráfico muestra cuantas observaciones (departamentos) caen en cada uno de ellos
 
+Tambien podemos modificar este gráfico especificando que el ancho del intervalo es igual a 10. Eso quiere decir que en el primer intervalo están los departamentos que tienen entre 0 y 9 huertas, el segundo contiene los departamentos que tienen entre 10 y 19 huertas escolares, etc. 
 
+```{r warning=FALSE}
+ggplot(huertas, aes(x = HUERTAS.ESCOLARES))+ 
+  geom_histogram(color='black',fill="forestgreen", binwidth = 10) +
+  theme_bw() +
+  labs(title='Histograma huertas escolares')
+```
+
+## Graficos de mayor complejidad
+
+Vamos a realizar algunos gráficos más complejos.
+
+Queremos mostrar cuáles son las provincias con mayor cantidad de huertas escolares. Utilizamos el dataset `resumen_prov_huertas_escolares` ya que tiene las variables que nos interesa representar: `total_huertas_esc` y `provincia`. Usamos un gráfico de barras y ordenamos las provincias de mayor a menor cantidad de huertas en total.
+
+```{r}
+ggplot(resumen_prov_huertas_escolares, aes(x=reorder(PROVINCIA, -total_huertas_esc), y=total_huertas_esc,fill=PROVINCIA)) +
+  geom_bar(stat='identity') + 
+  theme_bw() +
+  theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) +
+  labs(title='Total huertas escolares por provincia', y='Huertas escolares', x='')
+```
+
+Ahora queremos graficar el máximo valor de huertas escolares en un distrito por provincia y comparar ese valor con el promedio de huertas escolares en la provincia.
+
+```{r}
+ggplot(resumen_prov_huertas_escolares, aes(x=reorder(PROVINCIA, -max_huertas_esc), y=max_huertas_esc,fill=PROVINCIA)) +
+  geom_bar(stat='identity') +
+  geom_point(aes(y=promedio_huertas_esc)) +
+  theme_bw() +
+  theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) +
+  labs(title='Distrito con mas huertas escolares y promedio de huertas escolares por provincia', y='Maximo de Huertas escolares', x='')
+```
+
+Por último queremos mostrar la relación que existe entre cantidad total de huertas escolares, el promedio de las mismas y la cantidad de departamentos por provincia.
+
+```{r}
+ggplot(resumen_prov_huertas_escolares, aes(x=total_huertas_esc, y=promedio_huertas_esc, color=PROVINCIA)) +
+  geom_point(aes(size=cantidad_distritos)) +
+  geom_text(aes(label=ifelse((total_huertas_esc>500 | promedio_huertas_esc>30),as.character(PROVINCIA),'')), vjust=1.5, hjust=-0.025) +
+  theme_bw() +
+  scale_x_continuous(limits = c(0,2600)) +
+  scale_color_discrete(guide=FALSE) +
+  labs(x='Total Huertas Escolares', y='Promedio Huertas Escolares', title= 'Relacion cantidad y promedio de Huertas Escolares por Provincia') +
+  theme(legend.position = 'bottom')
+```
 
 # Ejercicios para practicar
-* Calcular el promedio del ingreso por ocupación principal (Variable **P21**)  para  **asalariados** con y sin **descuento jubilatorio** (Variable **PP07H**). Luego realizar un gráfico de barras donde se comparen ambos valores (para el 1er trimestre de 2017).                   
-  Pistas: Se deben filtrar previamente los ingresos mayores a 0 (**P21>0**).Chequear que ponderador corresponde utilizar           
-               
-- Graficar la distribución del ingreso por ocupación principal para Asalariados, Cuentapropistas y Patrones, con el tipo de gráfico Kernel                 
-   Pista: Usar la función **facet_wrap** para separar a cada una de las categorías ocupacionales)                
-   Sugerencia: incorporar la línea ``` scale_x_continuous(limits = c(0,50000)) ``` entre las capas del gráfico. ¿Qué cambió?
 
 
 
 # Ejercicios de tarea
 
-- Hacer un gráfico boxplot de la distribución de edades de los asalariados con descuento jubilatorio, y de los asalariados sin descuento jubilatorio.
-
-- Uniendo las bases de los distintos trimestres, calcular el procentaje de asalariados sin descuento jubilatorio como $\frac{Asal. s/ desc jubil}{Asal. c/ desc jubil+ Asal.s/ desc jubil}$. Luego realizar un gráfico de linea con la evolución de este indicador
 
 
 
