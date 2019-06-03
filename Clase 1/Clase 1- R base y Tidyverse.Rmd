@@ -87,8 +87,9 @@ A lo largo del curso iremos viendo numerosas funciones, según lo requieran los 
 paste("Pega","estas","palabras", sep = " ")
 
 # Paste0 pega los caracteres sin separador
-paste0(A,B,C)
+paste0("A","B","C")
 
+#listo los números de 1 al 5
 1:5
 
 sum(1:5)
@@ -401,7 +402,7 @@ Base_Iris_Propia <- read.xlsx(xlsxFile = "archivo_2_hojas.xlsx",sheet = "Iris_mo
 #alternativamente podemos especificar el número de orden de la hoja que deseamos levantar
 Base_Iris_Propia <- read.xlsx(xlsxFile = "archivo_2_hojas.xlsx",sheet = 1)
 ```
-# Ambientes de trabajo y Proyectos
+# Ambientes de trabajo y Proyectos (optativo)
 
 Hay algunas cosas que tenemos que tener en cuenta respecto del orden del ambiente en el que trabajamos:
 
@@ -430,28 +431,4 @@ Un proyecto no es un sólo script, sino toda una carpeta de trabajo.
 ![logo Rpoject](Rproject.png)
 
 Para crearlo, vamos al logo de nuevo projecto (Arriba a la izquierda de la panatalla), y elegimos la carpeta de trabajo.        
-
-# Ejercicios de práctica
-
-__Armado del ambiente de trabajo__
-
-- Abrir el Rstudio o Reiniciar la sesión de R en caso de que lo tengan ya abierto (`Session --> Restart R`)
-- Crear un proyecto nuevo en una carpeta (nueva o existente) de la computadora (`File --> New Project`)
-- Abrir un Script y guardarlo con su nombre y apellido en la misma carpeta donde crearon el proyecto (`File --> New File --> R script`)
-- Comenzar a operar sobre dicho script para resolver las siguietnes consignas:
-
-__R BASE__
-
-- Crear un OBJETO llamado _OBJETO_ definido como el resultado de la suma: 5 + 6
-- Crear un VECTOR _VEC0_ que contenga los números 1, 3, 4.
-- Modificar el segundo elemento del _VECTOR0_, asignandole el valor *40*
-- Crear 3 vectores ( _VEC1_, _VEC2_, _VEC3_) que sean transformaciones del anterior
-- Crear 3 vectores con la misma cantidad de elementos que VEC0, pero con variables string (texto) ( _VEC4_, _VEC5_, _VEC6_).
-- Crear un dataframe _DATAF_ como combinación de todos los __vectores__ creados previamente
-
-__Lectura de archivos__
-- Levantar el Excel llamado CANASTAS que se encuentra en la carpeta de Fuentes, la hoja "CBT" y definirla como         - Vista en clase: __openxlsx__ 
-    - Otra opción que utiliza otros parametros: __readxl__
-
-__Tidyverse__
 
