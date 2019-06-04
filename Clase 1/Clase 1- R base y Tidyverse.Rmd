@@ -141,7 +141,7 @@ E
 ```
 **IMPORTANTE**: Recordar que R es sensible a las mayúsculas y minúsculas, la función para combinar (así como la gran mayoría de las funciones) utiliza la minúscula.         
 
-####Acceso a los vectores 
+#### Acceso a los vectores 
 Para acceder a algún elemento del vector, podemos buscarlo por su número de orden, entre ```[ ]```
 
 ```{r}
@@ -184,7 +184,7 @@ R cuenta con un listado de ejemplos de datasets, al cual se pueda acceder median
 iris
 ```
 
-####Mirada rápida al contenido del dataframe
+#### Mirada rápida al contenido del dataframe
 En caso de que trabajar con bases de microdatos muy grandes puede resultar conveniente contar con algunos comandos para tener una síntesis de su contenido, antes de comenzar a realizar los procesamientos que deseemos.     
 
 Veamos algunos de ellos:
@@ -193,7 +193,8 @@ names(iris)
 summary(iris)
 head(iris)
 ```
-####Table y Unique
+
+#### Table y Unique
 Dos funciones muy útiles para empezar a trabajar son `table()` y `unique()`
 
 `unique()` nos devuelve un vector con los valores únicos, es decir sin duplicar. Por ejemplo
@@ -208,7 +209,7 @@ table(iris$Species)
 ```
 Para hacer una tabla bi-variada, podríamos agregar otro vector del dataframe como un segundo argumento a la función. 
 
-####Acceso a los elementos de un dataframe 
+#### Acceso a los elementos de un dataframe 
 Tal como en un __vector__ se ubica a los elementos mediante ```[ ]```, en un __dataframe__ se obtienen sus elementos de la forma __```[fila, columna]```__.
 
 Otra opción es especificar la columna, mediante el operador __```$```__, y luego seleccionar dentro de esa columna el registro deseado mediante el número de orden.
