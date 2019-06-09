@@ -1,0 +1,43 @@
+---
+title: "Ejercicios Clase 1"
+output: html_notebook
+---
+
+# Ejercicios para practicar
+
+## R Base
+
+#### Objetos básicos
+1) Crear un OBJETO llamado _numero_ definido como el resultado de la suma: 7 + 6
+2) Crear un OBJETO llamado _palabra_ definido como tu nombre
+3) Crear un OBJETO llamado _logico_ definido como TRUE
+4) Usar el comando `class()` para ver la clase de estos objetos
+
+#### Vectores
+5) Crear un VECTOR _vector-num_ que contenga los números 1, 13, 26.
+6) Usando operadores logicos encontrar cuáles elementos de _vector-num_ son menores a _numero_, cuáles son iguales a _numero_ y cuáles son mayores a número.    
+7) Encontrar qué elemento del vector es igual al doble de _numero_
+
+8) Crear un VECTOR _vector-palabras_ que contenga tus nombres y apellidos
+9) Reemplazar el elemento del apellido por "Wickham"
+
+## Data Frames y Tidyverse
+
+#### Lectura de archivos
+1) Crear un objeto llamado _pelis-arg_ a partir de la lectura del archivo de excel peliculas_argentinas.xlsx (por interfaz grafica o por comandos)
+2) Usar la funcion `glimpse()` para ver la estructura de la tabla ¿Cuántas observaciones (filas) y variables (columna) tiene? ¿Cuáles son los nombres de las columnas? ¿Qué tipo de dato tiene cada variable?
+Les ponemos una breve descripcion de los datos?
+3) Renombrar las columnas:
+
+  - "#" por "posicion"
+  - "Sem ant" por "semana_anterior"
+  - "% Variación" por "variacion_porcentual"
+
+4) Crear una nueva columna que se llame:
+
+  - "recaudacion_semanal" considerando que el precio de cada ticket es 150 pesos
+  - "recaudacion_acumulada" considerando que el precio de cada ticket es 150 pesos
+  
+5) Crear una nueva tabla que se llame _estrenos-arg_ con las peliculas que se estrenaron en la semana en Argentina
+6) Agrupar por estudio y ...
+7) Joins
