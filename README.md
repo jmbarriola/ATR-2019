@@ -11,7 +11,7 @@ Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 
 - [Ejercicios propuestos](Clase 1/ejercicios.nb.html).
 
-- [peliculas argentina](Clase 1/peliculas_argentina.xlsx).
+- [peliculas_argentina](Clase 1/peliculas_argentina.xlsx).
 
 - [peliculas_uruguay](Clase 1/epeliculas_uruguay.xlsx).
 
