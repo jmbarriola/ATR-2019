@@ -14,30 +14,30 @@ output: html_notebook
 4) Usar el comando `class()` para ver la clase de estos objetos
 
 #### Vectores
-5) Crear un VECTOR _vector-num_ que contenga los números 1, 13, 26.
-6) Usando operadores logicos encontrar cuáles elementos de _vector-num_ son menores a _numero_, cuáles son iguales a _numero_ y cuáles son mayores a número.    
+5) Crear un VECTOR _vector_num_ que contenga los números 1, 13, 26.
+6) Usando operadores logicos encontrar cuáles elementos de _vector_num_ son menores a _numero_, cuáles son iguales a _numero_ y cuáles son mayores a número.    
 7) Encontrar qué elemento del vector es igual al doble de _numero_
-
-8) Crear un VECTOR _vector-palabras_ que contenga tus nombres y apellidos
+8) Crear un VECTOR _vector_palabras_ que contenga tus nombres y apellidos
 9) Reemplazar el elemento del apellido por "Wickham"
 
 ## Data Frames y Tidyverse
 
 #### Lectura de archivos
-1) Crear un objeto llamado _pelis-arg_ a partir de la lectura del archivo de excel peliculas_argentinas.xlsx (por interfaz grafica o por comandos)
+1) Crear un objeto llamado _pelis_arg_ a partir de la lectura del archivo de excel peliculas_argentinas.xlsx (por interfaz grafica o por comandos)
 2) Usar la funcion `glimpse()` para ver la estructura de la tabla ¿Cuántas observaciones (filas) y variables (columna) tiene? ¿Cuáles son los nombres de las columnas? ¿Qué tipo de dato tiene cada variable?
-Les ponemos una breve descripcion de los datos?
 3) Renombrar las columnas:
-
   - "#" por "posicion"
   - "Sem ant" por "semana_anterior"
   - "% Variación" por "variacion_porcentual"
+Sugerencia: usar la función `colnames()` para ver cómo se escribe el nombre de la variable.
 
 4) Crear una nueva columna que se llame:
-
-  - "recaudacion_semanal" considerando que el precio de cada ticket es 150 pesos
+  - "espectadores_por_pantalla" calculando el cociente entre la cantidad de espectadores y la cantidad de pantallas.
   - "recaudacion_acumulada" considerando que el precio de cada ticket es 150 pesos
-  
-5) Crear una nueva tabla que se llame _estrenos-arg_ con las peliculas que se estrenaron en la semana en Argentina
-6) Agrupar por estudio y ...
+5) Crear una nueva tabla que se llame _estrenos_arg_ con el título de las películas que se estrenaron en la semana en Argentina. Pista: los estrenos no estuvieron en cartel la semana anterior.
+6) Crear una tabla _estudios_ con la información agrupada por estudio de cantidad total de espectadores y la cantidad total de acumulado. BONUS: agregar una columna con la cantidad de peliculas de cada estudio y otra con la cantidad de pantallas promedio.
 7) Joins
+  a) Crear un objeto llamado _pelis_uru_ a partir de la lectura del archivo de excel peliculas_uruguay.xls
+  b) Crear dos mini-datasets unicamente trayendo la información de Título, Sello y Público llamados _mini_uru_ y _mini_arg_ respectivamente. Renombrar sus columnas a _sello_arg_, _publico_arg_ y  _sello_uru_, _publico_uru_ respectivamente. Pista: poner los nombres viejos entre comillas.
+  c) Probar distintos tipos de join: _left join_, _right join_, _anti join_ e _inner join_. Usar el _Título_ para hacer la unión, conservando el orden Argentina - Uruguay.
+  d) Describir brevemente que información trae cada uno de los distintos joins. Por ejemplo, el left join trae todas las películas de Argentina con información para las que también están en el ranking de Uruguay. Las que tienen campos vacíos son películas que no están en el ranking de Uruguay.

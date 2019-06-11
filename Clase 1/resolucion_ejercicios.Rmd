@@ -1,0 +1,144 @@
+---
+title: "Resolución ejercicios Clase 1"
+output: html_document
+---
+
+# Resolución de los ejercicios
+
+## R Base
+
+#### Objetos básicos
+1) Crear un OBJETO llamado _numero_ definido como el resultado de la suma: 7 + 6
+```{r}
+numero <- 7+6
+numero
+```
+
+2) Crear un OBJETO llamado _palabra_ definido como tu nombre
+```{r}
+palabra <- "Milena"
+palabra
+```
+
+3) Crear un OBJETO llamado _logico_ definido como TRUE
+```{r}
+logico <- TRUE
+logico
+```
+
+4) Usar el comando `class()` para ver la clase de estos objetos
+```{r}
+class(numero)
+class(palabra)
+class(logico)
+```
+
+#### Vectores
+5) Crear un VECTOR _vector_num_ que contenga los números 1, 13, 26.
+```{r}
+vector_num <- c(1,13,26)
+vector_num
+```
+
+6) Usando operadores logicos encontrar cuáles elementos de _vector_num_ son menores a _numero_, cuáles son iguales a _numero_ y cuáles son mayores a número.
+```{r}
+vector_num[1]<numero
+vector_num[2]==numero
+vector_num[3]>numero
+```
+
+7) Encontrar qué elemento del vector es igual al doble de _numero_
+```{r}
+vector_num[3]==2*numero
+```
+
+
+8) Crear un VECTOR _vector_palabras_ que contenga tus nombres y apellidos
+```{r}
+vector_palabras <- c("Milena","Dotta")
+vector_palabras
+```
+
+9) Reemplazar el elemento del apellido por "Wickham"
+```{r}
+vector_palabras[2] <- "Wickham"
+vector_palabras
+```
+
+
+## Data Frames y Tidyverse
+
+#### Lectura de archivos
+
+```{r}
+library(readxl)
+library(tidyverse)
+```
+
+1) Crear un objeto llamado _pelis_arg_ a partir de la lectura del archivo de excel peliculas_argentinas.xlsx (por interfaz grafica o por comandos)
+```{r}
+pelis_arg <- read_excel("~/ATR-2019/Clase 1/peliculas_argentina.xlsx")
+pelis_arg
+```
+
+2) Usar la funcion `glimpse()` para ver la estructura de la tabla ¿Cuántas observaciones (filas) y variables (columna) tiene? ¿Cuáles son los nombres de las columnas? ¿Qué tipo de dato tiene cada variable?
+
+```{r}
+glimpse(pelis_arg)
+```
+
+3) Renombrar las columnas:
+  - "#" por "posicion"
+  - "Sem ant" por "semana_anterior"
+  - "% Variación" por "variacion_porcentual"
+Sugerencia: usar la función `colnames()` para ver cómo se escribe el nombre de la variable.
+  
+```{r}
+pelis_arg <- pelis_arg %>% rename(posicion = `#`, semana_anterior = "Sem ant", variacion_porcentual = "% Variación")
+```
+
+4) Crear una nueva columna que se llame:
+  - "espectadores_por_pantalla" calculando el cociente entre la cantidad de espectadores y la cantidad de pantallas.
+  - "recaudacion_acumulada" considerando que el precio de cada ticket es 150 pesos
+  
+```{r}
+pelis_arg = pelis_arg %>% mutate(espectadores_por_pantalla = round(Público/Pantallas,2), recaudacion_acumulada = Acumulado*150)
+```
+
+5) Crear una nueva tabla que se llame _estrenos_arg_ con el título de las películas que se estrenaron en la semana en Argentina. Pista: los estrenos no estuvieron en cartel la semana anterior.
+
+```{r}
+estrenos_arg = pelis_arg %>% filter(semana_anterior == 0) %>% select(Título)
+```
+
+6) Crear una tabla _estudios_ con la información agrupada por estudio de cantidad total de espectadores y la cantidad total de acumulado. BONUS: agregar una columna con la cantidad de peliculas de cada estudio y otra con la cantidad de pantallas promedio.
+
+```{r}
+estudios = pelis_arg %>% group_by(Sello) %>% summarise(suma_publico = sum(Público), suma_acum= sum(Acumulado), cantidad_peliculas = n(), pantallas_promedio = round(mean(Pantallas),2))
+```
+
+7) Joins
+a) Crear un objeto llamado _pelis_uru_ a partir de la lectura del archivo de excel peliculas_uruguay.xls
+  
+```{r}
+pelis_uru <- read_excel("~/ATR-2019/Clase 1/peliculas_uruguay.xlsx")
+pelis_uru
+```
+ 
+b) Crear dos mini-datasets unicamente trayendo la información de Título, Sello y Público llamados _mini_uru_ y _mini_arg_ respectivamente. Renombrar sus columnas a _sello_arg_, _publico_arg_ y  _sello_uru_, _publico_uru_ respectivamente. Pista: poner los nombres viejos entre comillas.
+  
+```{r}
+mini_arg = pelis_arg %>% select(Título,Sello,Público) %>% rename(sello_arg = Sello, publico_arg = "Público")
+mini_uru = pelis_uru %>% select(Título,Sello,Público) %>% rename(sello_uru = Sello, publico_uru = "Público")
+```
+  
+c) Probar distintos tipos de join: _left join_, _right join_, _anti join_ e _inner join_. Usar el _Título_ para hacer la unión, conservando el orden Argentina - Uruguay.
+
+```{r}
+lj = left_join(mini_arg,mini_uru, by = "Título")
+rj = right_join(mini_arg,mini_uru, by = "Título")
+aj = anti_join(mini_arg,mini_uru, by = "Título")
+ij = inner_join(mini_arg,mini_uru, by = "Título")
+```
+
+d) Describir brevemente que información trae cada uno de los distintos joins. Por ejemplo, el left join trae todas las películas de Argentina con información para las que también están en el ranking de Uruguay. Las que tienen campos vacíos son películas que no están en el ranking de Uruguay.
