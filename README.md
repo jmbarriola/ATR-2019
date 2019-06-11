@@ -6,6 +6,11 @@ Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 
 - [Notebook](Clase 1/Clase 1- R base y Tidyverse.nb.html).
 
+### Clase 2
+#### Ejercicios: Repaso de lenguaje base de R y paquete tidyverse
+
+- [Ejercicios propuestos](Clase 1/ejercicios.nb.html).
+
 ### Clase 3
 
 #### Gráficos y herramientas de estadística descriptiva
