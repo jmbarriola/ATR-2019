@@ -10,7 +10,9 @@ Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 #### Ejercicios: Repaso de lenguaje base de R y paquete tidyverse
 
 - [Ejercicios propuestos](Clase 1/ejercicios.nb.html).
-- [peliculas_argentina](Clase 1/peliculas_argentina.xlsx).
+
+- [peliculas argentina](Clase 1/peliculas_argentina.xlsx).
+
 - [peliculas_uruguay](Clase 1/epeliculas_uruguay.xlsx).
 
 ### Clase 3
