@@ -1,0 +1,135 @@
+---
+title: "Clase 2"
+output: html_notebook
+subtitle: Practica Repaso de R Base y Tidyverse
+---
+## Objetivo 
+
+Objetivos de esta vclase practica:
+
+- Trabajar la lectura de uno o mas archivos
+
+- Conocer la estructura de las tablas
+
+- Realizar limpiezas si fueran necesarias
+
+- Transformar variables o crear variables nuevas
+
+- De ser necesario, agrupar informacion y/o incorporar informacion de otras tablas
+
+- Escribir un archivo nuevo con los datos __trabajados__
+
+## Sugerencias
+
+### Conocer la estructura de la tabla
+
+Exsiten dos comandos para concer la estructura de la tabla, los comandos `glimpse()` de Tidyverse y `summary()` de R base. 
+
+La funcion `glimpse()` nos devuelve la cantidad de observaciones (filas), cantidad de variables (columnas), el nombre de cada una de las variables, su tipo y los primeros valores que toma cada variable.
+
+```{r echo = FALSE}
+library(tidyverse)
+```
+
+
+```{r}
+iris %>% glimpse()
+```
+
+La funcion `summary()` nos devuelve el nombre de las variables y metricas resumen de las mismas. Las metricas resumen varian de acuerdo al tipo de variable. A diferencia de `glimpse()`, esta funcion tambien devuelve la cantidad de registros faltantes por variable.
+
+```{r}
+summary(iris)
+```
+
+### Manejo de valores faltantes
+
+Es comun que en las bases de datos encontremos valores faltantes. Las causas pueden ser un error en la carga o porque no se tiene el dato (esto puede deberse a varios motivos, desde la imposibilidad de conseguir esa informacion hasta la negativa de un encuestado a responder determinada pregunta). 
+
+Cuando tenemos datos faltantes podemos hacer basicamente tres cosas: eliminar los registros con faltantes, imputar los valores faltantes siguiendo alguna tecnica o usar los datos faltantes para detectar patrones subyacentes. 
+
+Existen dos funciones principales para detectar y eliminar datos faltantes `is.na()` y `complete.cases()` dentro de R Base. La primera funcion la podemos aplicar a nivel varaible mientras que la segunda elimina todos los registros que tienen al menos una variable con un valor faltante.
+
+Dentro de tidyverse existe la funcion `drop_na()` que permite hacer cosas similares.
+
+```{r}
+# Creamos un dataframe con valores faltantes
+df <- data.frame(nombre = c("Juan", "Milena", "Alejandro", "Agustina", "Martin"), edad = c(26, NA, 20, 24, NA), altura = c(185, 160, 175, 165, NA))
+df
+```
+
+```{r}
+# Vemos la cantidad de faltantes con summary
+summary(df)
+```
+
+```{r}
+# Vemos que devuelve la funcion is.na
+is.na(df)
+```
+
+```{r}
+# Filtramos los registros que tienen faltantes en la altura
+
+df %>% filter(!is.na(altura))
+```
+
+```{r}
+# Vemos que devuelve la funcion complete.cases
+complete.cases(df)
+```
+
+```{r}
+# Nos quedamos con los registros sin faltantes
+df %>% filter(complete.cases(df))
+```
+
+**drop_na**
+
+```{r}
+# Si no le especificamos ningun argumento funciona como complete.cases
+df %>% drop_na()
+```
+
+```{r}
+# Si le especificamos una variable funciona como is.na
+df %>% drop_na(altura)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
