@@ -6,14 +6,15 @@ Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 
 - [Notebook](Clase 1/Clase 1- R base y Tidyverse.nb.html).
 
-### Clase 2
-#### Ejercicios: Repaso de lenguaje base de R y paquete tidyverse
-
 - [Ejercicios propuestos](Clase 1/ejercicios.nb.html).
 
 - [peliculas_argentina](Clase 1/peliculas_argentina.xlsx).
 
-- [peliculas_uruguay](Clase 1/epeliculas_uruguay.xlsx).
+- [peliculas_uruguay](Clase 1/peliculas_uruguay.xlsx).
+
+### Clase 2
+#### Ejercicios: Repaso de lenguaje base de R y paquete tidyverse
+
 
 ### Clase 3
 
