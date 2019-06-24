@@ -1,6 +1,8 @@
 ---
 title: "Resolución ejercicios Clase 1"
-output: html_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 # Resolución de los ejercicios
