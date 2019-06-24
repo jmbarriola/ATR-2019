@@ -27,7 +27,7 @@ Exsiten dos comandos para concer la estructura de la tabla, los comandos `glimps
 
 La funcion `glimpse()` nos devuelve la cantidad de observaciones (filas), cantidad de variables (columnas), el nombre de cada una de las variables, su tipo y los primeros valores que toma cada variable.
 
-```{r echo = FALSE}
+```{r,echo = FALSE}
 library(tidyverse)
 ```
 
@@ -47,6 +47,8 @@ summary(iris)
 Es comun que en las bases de datos encontremos valores faltantes. Las causas pueden ser un error en la carga o porque no se tiene el dato (esto puede deberse a varios motivos, desde la imposibilidad de conseguir esa informacion hasta la negativa de un encuestado a responder determinada pregunta). 
 
 Cuando tenemos datos faltantes podemos hacer basicamente tres cosas: eliminar los registros con faltantes, imputar los valores faltantes siguiendo alguna tecnica o usar los datos faltantes para detectar patrones subyacentes. 
+
+#### Deteccion y filtrado de valores faltantes
 
 Existen dos funciones principales para detectar y eliminar datos faltantes `is.na()` y `complete.cases()` dentro de R Base. La primera funcion la podemos aplicar a nivel varaible mientras que la segunda elimina todos los registros que tienen al menos una variable con un valor faltante.
 
@@ -96,16 +98,46 @@ df %>% drop_na()
 df %>% drop_na(altura)
 ```
 
+#### Imputacion de valores faltantes
 
+Podemos utilizar la funcion `replace_na()` para reemplazar (imputar) los valores faltantes.
 
+A la funcion `replace_na()` le debemos pasar una **lista** con el nombre de la variable y el valor con el cual queremos reemplazar todos los valores faltantes
 
+```{r}
+# En este caso, reemplamos los valores faltantes de altura con 190
+df %>% replace_na(list(altura=190))
+```
 
+```{r}
+# En este caso reemplazamos los valores faltantes de edad con 22, y los de altura con 190
+df %>% replace_na(list(edad=22, altura=190))
+```
 
+### Conversion del tipo de variable
 
+Para convertir una columna a otro tipo de dato podemos utilizar la funcion `mutate()` y alguna de las siguientes funciones:
 
+* `as.numeric()`: convierte el tipo de dato a numerico
+* `as.factor()`: convierte el tipo de dato a factor
+* `as.character()`: convierte el tipo de dato a string (palabra)
 
+```{r}
+#Vemos los tipos de datos con glimpse
+glimpse(df)
+```
 
+Nombre es un factor, mientras que edad y altura son numericos. Vamos a convertir el nombre a numerico, la edad a string y la altura a factor
 
+```{r}
+# Definimos los tipos nuevos
+df_tipos_nuevos <- df %>% mutate(nombre= as.numeric(nombre), 
+                                 edad = as.character(edad),
+                                 altura = as.factor(altura))
+glimpse(df_tipos_nuevos)
+```
+
+Hay que tener mucho cuidado al hacer estas transformaciones ya que, por ejemplo, al transformar el nombre a numerico, perdimos los datos originales. 
 
 
 

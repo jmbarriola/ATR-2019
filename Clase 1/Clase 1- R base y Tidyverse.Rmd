@@ -1,10 +1,12 @@
 ---
 title: "Clase 1"
+subtitle: Repaso de R Base y Tidyverse
 output:
   html_notebook:
     toc: yes
     toc_float: yes
-subtitle: Repaso de R Base y Tidyverse
+  pdf_document:
+    toc: yes
 ---
 Esta presentación representa un repaso sintético de los aspectos centrales para la programación en R, mediante el lenguaje de R Base y el paquete [Tidyverse](https://www.tidyverse.org/). Para ver en mayor detalle la descripción general sobre los programas R y Rstudio, y encontrar más ejemplos sobre las funciones aqui utilizadas puede recurrirse a la [edición 2018 del curso ATR](https://diegokoz.github.io/ATR/)
 
