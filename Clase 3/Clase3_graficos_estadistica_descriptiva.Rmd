@@ -81,6 +81,19 @@ Un **outlier** es una observacion con un valor atipico de la variable. En este c
 
 Entonces el promedio, por su formula de calculo, cambia bastante su valor cuando hay valores atipicos (outliers) en nuestra variable. Por eso hay que tener cuidado cuando lo calculamos y detectar si es que existen outliers.
 
+La función `mean()` no funciona cuando hay datos faltantes. Por eso es necesario agregar una especificación a la función para que no tome en consideración los datos faltantes a la hora de calcular el promedio.
+```{r}
+estaturas_faltantes <- c(estaturas_1,NA)
+estaturas_faltantes
+```
+```{r}
+mean(estaturas_faltantes)
+```
+```{r}
+mean(estaturas_faltantes,na.rm = TRUE )
+```
+
+
 **VENTAJA**
 
 El **promedio** es una medida bastante conocida y sencilla de interpretar
@@ -228,7 +241,7 @@ $s_x= \frac{1}{N} \sum\limits_{i=1}^N (x_i-\bar{x})^2$
 
 A cada observacion se le resta el promedio y luego se eleva al cuadrado para siempre sea positivo. Luego se suman todos esos valores y se dividen por la cantidad de observaciones.
 
-Si tenemos un conjunto de observaciones muy cercanas al promedio, la varianza va a ser pequeña y cercana a cero. En cambio, si tenemos un conjunto de observaciones que son estan lejos del promedio, la varianza va a ser muy grande.
+Si tenemos un conjunto de observaciones muy cercanas al promedio, la varianza va a ser pequeña y cercana a cero. En cambio, si tenemos un conjunto de observaciones que estan lejos del promedio, la varianza va a ser muy grande.
 
 El comando de esta medida estadistica es `var()`.
 ```{r}
@@ -258,7 +271,7 @@ Trabajaremos con un conjunto de datos del portal de datos abiertos de Argentina.
 
 ```{r}
 #Leemos el archivo
-huertas <- read.csv('/home/juan/ATR-2019/Fuentes/dahuertas2.csv',sep =';', header = TRUE, stringsAsFactors = FALSE)
+huertas <- read.csv('~/ATR-2019/Fuentes/dahuertas2.csv',sep =';', header = TRUE, stringsAsFactors = FALSE)
 # Revisamos la estructura del dataset
 glimpse(huertas)
 ```
@@ -273,13 +286,14 @@ Supongamos que estamos somos un grupo de analistas que nos interesa analizar el 
 Utilizamos el comando `summarise()` para obtener distintas medidas de resumen sobre la variable de interes:
 
 ```{r}
-resumen_huertas_escolares <- huertas %>% summarise(total_huertas_esc = sum(HUERTAS.ESCOLARES), # total de huertas escolares
-                                                   promedio_huertas_esc = mean(HUERTAS.ESCOLARES), # promedio de huertas escolares
-                                                   mediana_huertas_esc = median(HUERTAS.ESCOLARES),  # mediana de huertas escolares
-                                                   max_huertas_esc = max(HUERTAS.ESCOLARES), # maximo de huertas escolares
-                                                   min_huertas_esc = min(HUERTAS.ESCOLARES), # minimo de huertas escolares
-                                                   rango_huertas_esc = max_huertas_esc -min_huertas_esc, # rango de huertas escolares
-                                                   varianza_huertas_esc = var(HUERTAS.ESCOLARES)) # varianza de huertas escolares
+resumen_huertas_escolares <- huertas %>% 
+  summarise(total_huertas_esc = sum(HUERTAS.ESCOLARES), # total de huertas escolares
+            promedio_huertas_esc = mean(HUERTAS.ESCOLARES), # promedio de huertas escolares
+            mediana_huertas_esc = median(HUERTAS.ESCOLARES),  # mediana de huertas escolares
+            max_huertas_esc = max(HUERTAS.ESCOLARES), # maximo de huertas escolares
+            min_huertas_esc = min(HUERTAS.ESCOLARES), # minimo de huertas escolares
+            rango_huertas_esc = max_huertas_esc -min_huertas_esc, # rango de huertas escolares
+            varianza_huertas_esc = var(HUERTAS.ESCOLARES)) # varianza de huertas escolares
 
 resumen_huertas_escolares
 ```
@@ -345,9 +359,6 @@ plot(iris)
 ```{r}
 #Al especificar una variable, puedo ver el valor que toma cada uno de sus registros (Index)
 plot(iris$Sepal.Length,type = "p") # Un punto por cada valor
-plot(iris$Sepal.Length,type = "l") # Una linea que una cada valor
-plot(iris$Sepal.Length,type = "b") #Ambas
-hist(iris$Sepal.Length, col = "lightsalmon1", main = "Histograma")
 ```
 
 Los gráficos del R base son útiles para escribir de forma rápida y obtener alguna información mientras trabajamos. Muchos paquetes estadísticos permiten mostrar los resultados de forma gráfica con el comando plot (por ejemplo, las regresiones lineales ```lm()```).       
@@ -547,11 +558,6 @@ ggplot(resumen_prov_huertas_escolares, aes(x=total_huertas_esc, y=promedio_huert
   theme(legend.position = 'bottom')
 ```
 
-# Ejercicios para practicar
-
-
-
-# Ejercicios de tarea
 
 
 
