@@ -23,7 +23,9 @@ Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 
 #### Gráficos y herramientas de estadística descriptiva
 
-- [Notebook](Clase 3/Clase3_graficos_estadistica_descriptiva.nb.html).
+- [Notebook](Clase 3/Clase3_graficos_estadistica_descriptiva.nb.html)
+
+- [Dataset Huertas](Fuentes/dahuertas2.csv)
 
 
 ### Clase 5
