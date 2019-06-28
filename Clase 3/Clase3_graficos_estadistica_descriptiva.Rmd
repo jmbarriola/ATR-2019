@@ -278,7 +278,7 @@ glimpse(huertas)
 
 Vemos que tenemos 8 variables y 516 observaciones. Tenemos informacion de la provincia, el departamento, la cantidad de huertas familiares, escolares y comunitarias e institucionales.
 
-Cada observacion es un departamento en Argentina.
+Cada observacion es un departamento en Argentina
 
 #### Medidas de resumen generales
 
