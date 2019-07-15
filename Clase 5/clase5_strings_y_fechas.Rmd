@@ -1,0 +1,272 @@
+---
+title: Clase 3
+author: "Barriola y Dotta "
+subtitle: Strings y Fechas
+date: "3/5/2019"
+output:
+  html_notebook: 
+    toc: true
+    toc_float: true 
+---
+
+#### Cargamos las librerías a utilizar
+```{r}
+library(tidyverse) #siempre lo tenemos a mano
+library(stringr) #para trabajar con strings
+library(lubridate) #para trabajar con fechas 
+```
+
+# Manejo de fechas con lubridate
+
+
+
+# Manejo de strings con stringr
+
+Vamos a usar un paquete muy útil para manejar variables de tipo `string`, es decir, variables de texto, llamado `stringr`. Primero vamos a ver algunos de los principales comandos y luego vamos a ver algunos ejemplos un poco más complejos de cómo podemos usar las funciones de este paquete. 
+
+Tal como vimos para `ggplot2`, el paquete `stringr` cuenta con una cheat sheet que pueden consultar siguiendo este [link](http://edrub.in/CheatSheets/cheatSheetStringr.pdf).
+
+## Principales funciones
+
+### str_length
+
+Con la función `str_length()` podemos ver el largo de un string.
+```{r}
+string1 <- "abcdefghi"
+str_length(string1)
+```
+
+Ojo que cuenta los espacios en blanco como un caracter.
+```{r}
+string2 <- "abcd efghi"
+str_length(string2)
+```
+
+### str_sub
+
+La función `str_sub()` nos permite extraer los caracteres que se encuentran entre determinadas posiciones. Tiene tres argumentos: el string, el orden del caracter a partir del cual tiene que empezar a extraer, el orden del caracter hasta el cual tiene que extraer.
+
+```{r}
+#quiero el tercer caracter
+str_sub(string1,3,3)
+```
+```{r}
+#quiero el cuarto y quinto caracter
+str_sub(string1,4,5)
+```
+
+Puedo pasarle la posición de los caracteres con un menos para indicar que quiero que cuente de atrás para adelante. Por ejemplo, si quiero que traiga el anteúltimo caracter llamo a la posición como `-2`.
+```{r}
+#quiero la última y anteúltima posición
+str_sub(string1,-2,-1)
+```
+
+Otro uso que le podemos dar a este comando es el de reemplazar elementos. Supongamos que quiero reemplazar la última letra por una z.
+```{r}
+str_sub(string1,-1,-1) <- "z"
+string1
+```
+
+### Manejo de espacios en blanco
+
+Es frecuente que aparezcan datos mal cargados o con errores de tipeo que tienen espacios donde no debería haberlos. La función `str_trim()` permite que nos deshagamos de los espacios en blanco a izquierda, derecha o ambos lados de nuestro string.
+
+```{r}
+string3 <- c("  a   ", "b   ",  "   c")
+str_trim(string3)
+```
+
+```{r}
+str_trim(string3, "left")
+```
+
+### Mayúsculas y minúsculas
+
+Existen varias funciones para manipular las mayusculas/minúsculas de nuestros strings. A modo de sugerencia, siempre es convientiente manejarse con todos los caracteres en minúscula o en mayúscula. Esto ayuda a normalizar la información para armar mejor grupos, joinear tablas, etc.
+
+```{r}
+string4 <- "No me gusta el frio"
+string4
+```
+```{r}
+#llevo todo a minúsculas
+str_to_lower(string4)
+```
+```{r}
+#llevo todo a mayúsculas
+str_to_upper(string4)
+```
+```{r}
+#llevo a mayúscula la primer letra de cada palabra
+str_to_title(string4)
+```
+
+### str_split
+
+La función `str_split()` nos permite partir un string de acuerdo a algún separador que definamos.
+
+```{r}
+#quiero separar todas las letras de mi string
+str_split(string1,"")
+```
+
+```{r}
+string5 <- "ab-cd-ef"
+string5
+```
+
+```{r}
+str_split(string5,"-")
+```
+
+### gsub
+
+La función `gsub` nos permite reemplazar parte del string por otra cosa
+
+```{r}
+string6 <- "todos los caballos blancos"
+string6
+```
+
+```{r}
+#le sacamos los espacios
+gsub(" ", "", string6)
+```
+
+```{r}
+#lo llevamos a lenguaje inclusivo
+gsub("os", "xs", string6)
+```
+
+### grepl
+
+La función `grepl()` nos permite encontrar expresiones dentro de nuestros strings. Nos reporta `VERDADERO` o `FALSO` de acuerdo a si encuentra la expresión que estamos buscando.
+
+```{r}
+string7 <-c("caño", "baño", "ladrillo")
+string7
+```
+```{r}
+grepl("ñ",string7)
+```
+
+
+## Ejemplos prácticos
+
+### Ejemplo tiburones
+
+Vamos a ver un ejemplo a partir de una base pública que nos trae información sobre ataques de tiburones en el mundo en distintos momentos. Cada fila corresponde a un ataque.
+
+```{r}
+tiburones <- read.csv("https://raw.githubusercontent.com/dmuba/dmuba.github.io/3005a7a5e8c9db5c188ca22a7b9269c94db8ced7/Practicos/TPs%20Entregables/TP02/Shark_Attack_Data.csv")
+tiburones
+```
+
+Vamos a trabajar un poco con la limpieza y la normalización de esta base ya que al juntar datos de distintas fuentes la información no es homogénea por lo que es dificil hacer cualquier tipo de análisis.
+
+### Date
+
+Vamos a empezar analizando la variable `Date` de nuestro dataset. Primero llevamos esta variable a un pequeño dataset aparte y llevamos la variable al tipo `character` para poder manejarla como un string.
+
+```{r}
+Date<-data.frame(tiburones[,c('Case.Number','Date')])
+Date$Date<-as.character(Date$Date)
+Date
+```
+
+Vemos que la variable `Date` viene en muchos casos con la palabra __Reported__ lo cual nos impide que podamos tratar esa expresión como fecha usando las herramientas que vimos en la sección de lubridate. Vamos a ver dos formas de eliminarla, una más directa y una indirecta pero que nos sirve para practicar comandos.
+
+```{r}
+#forma directa usando gsub
+Date$date_clean1 <- gsub("Reported ", "", Date$Date)
+Date
+```
+
+```{r}
+#forma indirecta
+
+#vemos que casos tienen el térimno "Reported"
+Date$reported<-grepl("Reported",Date$Date)
+Date
+```
+
+```{r}
+#Extraemos los carcteres 10 a 20 del string
+Date$subtr<-substr(Date$Date,10,20)
+Date
+```
+
+
+```{r}
+#si Date tiene la palabra "Reported", entonces reemplzamos ese valor por el extracto que armamos en el paso anterior
+Date$Date[Date$reported==TRUE]<-Date$subtr[Date$reported==TRUE]
+Date
+```
+
+### Time
+
+Vamos ahora a ver el caso de la variable `Time`. Vamos a proceder igual que con la variable `Date`, creando un pequeño dataset para normalizar esta variable.
+
+```{r}
+#traemos la variable que nos interesa
+Time<-data.frame(tiburones$Time)
+#la llevamos a tipo character para trabajarla como string
+Time$tiburones.Time<-as.character(Time$tiburones.Time)
+#borro esta entrada porque tiene un dato raro que no nos deja trabajar 
+Time[1545,] <- ""
+#llevamos todo a minúsculas (con otra función que también hace eso)
+Time$tiburones.Time<-tolower(Time$tiburones.Time)
+Time
+```
+
+Nuestro objetivo es llevar las horas a una variable categórica con los valores __mañana__, __tarde__ y __noche__. Para eso por un lado vamos a tener que extraer la hora de las variables que la tienen cargada en forma númerica para luego agruparlas en esas tres categorías, y por el otro lado normalizar la forma categórica dada en inglés que actualmente tiene cuatro categorías.
+
+Empecemos trabajando con las entradas que tienen los valores dados en números. Primero vamos a ver que entradas tienen __h__ y vamos a generar una columna con el largo del string.
+
+```{r}
+Time$tien_h<-grepl("h",Time$tiburones.Time)
+Time$largo<-nchar(Time$tiburones.Time)
+Time
+```
+
+Ahora creamos una variable que nos va a decir si se trata de un caso con la hora dada en números. Para detectar estos casos, el string tiene que contener la letra __h__ y tener 5 caracteres.
+
+```{r}
+Time = Time %>% mutate(es_hora = case_when(tien_h==TRUE & largo==5 ~ "si",
+                                           tien_h==FALSE | largo!=5 ~ "no"))
+Time$es_hora = as.character(Time$es_hora)
+Time
+```
+
+Ahora, si se trata de una entrada con el formato de hora, vamos a traer la primera y segunda posición que corresponden a la hora.
+
+```{r, warning=FALSE}
+Time = Time %>% mutate(hora = case_when(es_hora =="si" ~ substr(Time$tiburones.Time,1,2)))
+Time$hora = as.numeric(Time$hora)
+Time
+```
+
+Ahora vamos a lelvar los valores noméricos continuos a las variables discretas que mencionamos y vamos a llevar las variables en inglés a las variables en castellano.
+
+```{r}
+Time = Time %>% mutate(hora_estandar = case_when(grepl("afternoon",Time$tiburones.Time)==TRUE ~ "tarde",
+                                                 grepl("day",Time$tiburones.Time)==TRUE ~ "tarde",
+                                                 grepl("night",Time$tiburones.Time)==TRUE ~ "noche",
+                                                 grepl("morning",Time$tiburones.Time)==TRUE ~ "mañana",
+                                                 hora>5 & hora<12 ~ "mañana",
+                                                 hora>11 & hora<19 ~ "tarde",
+                                                 hora<6 | hora>18 ~ "noche"))
+Time$hora_estandar[is.na(Time$hora_estandar)] <- "hora indefinida"
+Time
+```
+
+
+
+
+
+
+
+
+
+
+
