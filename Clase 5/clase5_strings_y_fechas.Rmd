@@ -40,6 +40,7 @@ class(fecha)
 ```
 
 Con la función dmy_hms podemos convertir este string a una fecha: estamos indicando que el formato de la fecha es día(d), mes(m), año(y), hora(h), minuto(m) y segundo(s)
+
 ```{r}
 fecha  <- dmy_hms(fecha)
 fecha
@@ -311,10 +312,9 @@ Date<-tiburones %>% select(Case.Number, Date) %>% # Seleccionamos las variables 
 glimpse(Date)
 ```
 
-Vemos que la variable `Date` viene en muchos casos con la palabra __Reported__ lo cual nos impide que podamos tratar esa expresión como fecha usando las herramientas que vimos en la sección de lubridate. Vamos a ver dos formas de eliminarla, una más directa y una indirecta pero que nos sirve para practicar comandos.
+Vemos que la variable `Date` viene en muchos casos con la palabra __Reported__ lo cual nos impide que podamos tratar esa expresión como fecha usando las herramientas que vimos en la sección de lubridate. 
 
 ```{r}
-#forma directa usando gsub
 Date <- Date %>% mutate(date_clean1= str_replace_all(string = Date, pattern =  "Reported ", replacement = ""))
 head(Date,10)
 ```
@@ -381,7 +381,7 @@ Time
 ```{r}
 # Seleccionamos algunas variables
 tiburones <- tiburones %>% select(Case.Number, Type,Date, pais)
-# Hacemos la limpieza de la fecha como vimos en la seccion de Stringr
+# Hacemos la limpieza de la fecha como vimos más arriba
 tiburones <- tiburones %>% mutate(date_clean1= str_replace_all(string = Date, pattern =  "Reported ", replacement = ""))
 glimpse(tiburones)
 ```
@@ -389,10 +389,10 @@ glimpse(tiburones)
 Transformamos la variable fecha de un string a una fecha
 
 ```{r}
-tiburones <- tiburones %>% mutate(fecha= dmy(Date))
+tiburones <- tiburones %>% mutate(fecha= dmy(date_clean1))
 ```
 
-El mensaje indica que no pudo convertir a fecha 891 registros.
+El mensaje indica que no pudo convertir a fecha 889 registros.
 
 Extraemos variables de la fecha
 
