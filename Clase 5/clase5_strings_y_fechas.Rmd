@@ -1,26 +1,100 @@
 ---
-title: Clase 3
+title: Clase 5
 author: "Barriola y Dotta "
 subtitle: Strings y Fechas
-date: "3/5/2019"
+date: "16/7/2019"
 output:
   html_notebook: 
     toc: true
     toc_float: true 
 ---
+<style type="text/css">
+div.main-container {
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
 
 #### Cargamos las librerías a utilizar
-```{r}
+```{r, message=FALSE}
 library(tidyverse) #siempre lo tenemos a mano
 library(stringr) #para trabajar con strings
 library(lubridate) #para trabajar con fechas 
 ```
 
-# Manejo de fechas con lubridate
+# Lubridate: Manejo de fechas
+El paquete lubridate está pensado para trabajar con los datos tipo fecha(date) o fecha-hora(datetime) para cambiarles el formato, realizar operaciones y extraer información.
 
+La [cheatsheet](https://rawgit.com/rstudio/cheatsheets/master/lubridate.pdf) muestra todas las cosas que se pueden hacer con este paquete
 
+### Cambio de formato
 
-# Manejo de strings con stringr
+Existe una gran cantidad de funciones para realizar esto. La idea general es poder llevar los objetos datetime a un formato común compuesto de los elementos: año, mes, día, hora, minuto y segundo (también se puede setear el huso horario)
+
+```{r}
+fecha  <- "29/09/93 17:35:16"
+fecha
+# Clase de dato
+class(fecha)
+```
+
+Con la función dmy_hms podemos convertir este string a una fecha: estamos indicando que el formato de la fecha es día(d), mes(m), año(y), hora(h), minuto(m) y segundo(s)
+```{r}
+fecha  <- dmy_hms(fecha)
+fecha
+# Clase de dato
+typeof(fecha)
+```
+Muchas funciones de lubridate operan con esta misma lógica
+
+Otra función para realizar un cambio de formato es *parse_date_time*. Permite construir objetos datetime a partir de datos más complejos, como por ejemplo cuando aparece el nombre del mes y el año.
+
+En el parámetro *x* pasamos el dato de la fecha y en el parámetro *orders* especificamos el orden en el cual se encuentra la información de la fecha
+
+```{r}
+fecha2  <- "Sep-93"
+fecha2 <- parse_date_time(fecha2, orders = 'my')
+fecha2
+```
+
+### Extracción de información
+
+Existen muchas funciones muy sencillas para extraer información de un objeto datetime. Algunas son
+
+```{r}
+# Obtener el año
+year(fecha)
+#Obtener el semestre
+semester(fecha)
+#Obtener el trimestre
+quarter(fecha)
+#Obtener el mes
+month(fecha)
+# Obtener el día
+day(fecha)
+# Obtener la fecha
+date(fecha)
+# Obtener el dia de la semana
+wday(fecha)
+#Obtener el nombre del día
+wday(fecha, label = TRUE) 
+#Obtener la hora
+hour(fecha) 
+```
+
+### Operaciones
+
+Podemos sumar o restarle cualquier período de tiempo a un objeto datetime
+
+```{r}
+# Sumo dos días 
+fecha + days(2)
+# Resto 1 semana y dos horas
+fecha - (weeks(1) + hours(2))
+```
+
+# Stringr: manejo de strings
 
 Vamos a usar un paquete muy útil para manejar variables de tipo `string`, es decir, variables de texto, llamado `stringr`. Primero vamos a ver algunos de los principales comandos y luego vamos a ver algunos ejemplos un poco más complejos de cómo podemos usar las funciones de este paquete. 
 
@@ -44,18 +118,20 @@ str_length(string2)
 
 ### str_sub
 
-La función `str_sub()` nos permite extraer los caracteres que se encuentran entre determinadas posiciones. Tiene tres argumentos: el string, el orden del caracter a partir del cual tiene que empezar a extraer, el orden del caracter hasta el cual tiene que extraer.
+La función `str_sub()` nos permite extraer los caracteres que se encuentran entre determinadas posiciones. Tiene tres argumentos: el string, el orden del caracter a partir del cual tiene que empezar a extraer y el orden del caracter hasta el cual tiene que extraer.
 
 ```{r}
 #quiero el tercer caracter
 str_sub(string1,3,3)
 ```
+
 ```{r}
 #quiero el cuarto y quinto caracter
 str_sub(string1,4,5)
 ```
 
 Puedo pasarle la posición de los caracteres con un menos para indicar que quiero que cuente de atrás para adelante. Por ejemplo, si quiero que traiga el anteúltimo caracter llamo a la posición como `-2`.
+
 ```{r}
 #quiero la última y anteúltima posición
 str_sub(string1,-2,-1)
@@ -72,10 +148,17 @@ string1
 Es frecuente que aparezcan datos mal cargados o con errores de tipeo que tienen espacios donde no debería haberlos. La función `str_trim()` permite que nos deshagamos de los espacios en blanco a izquierda, derecha o ambos lados de nuestro string.
 
 ```{r}
-string3 <- c("  a   ", "b   ",  "   c")
-str_trim(string3)
+string3 <- c("  acelga   ", "brocoli   ",  "   choclo")
+#Veamos el string
+string3
+```
+Quitamos los espacios en blanco a ambos lados con el argumento side='both'
+
+```{r}
+str_trim(string3, side = 'both')
 ```
 
+Quitamos los espacios en blanco del lado izquierdo con el argumento side='left'
 ```{r}
 str_trim(string3, "left")
 ```
@@ -103,25 +186,40 @@ str_to_title(string4)
 
 ### str_split
 
-La función `str_split()` nos permite partir un string de acuerdo a algún separador que definamos.
+La función `str_split()` nos permite partir un string de acuerdo a algún separador/patron (pattern) que definamos.
 
 ```{r}
 #quiero separar todas las letras de mi string
-str_split(string1,"")
+string1_separado <- str_split(string1,pattern = "")
+string1_separado
 ```
+
+Notemos que esta funcion nos devuelve una lista
+
+```{r}
+class(string1_separado)
+# Si queremos acceder al primer elemento de la lista
+string1_separado[[1]][1]
+```
+
+Definimos un nuevo string
 
 ```{r}
 string5 <- "ab-cd-ef"
 string5
 ```
 
+Lo separamos por el guion
+
 ```{r}
-str_split(string5,"-")
+str_split(string5,pattern="-")
 ```
 
-### gsub
+### Reemplazar elementos de strings
 
-La función `gsub` nos permite reemplazar parte del string por otra cosa
+La función base `gsub()` nos permite reemplazar parte del string por otra cosa. Las funciones `str_replace()` y `str_replace_all()` de `stringr` nos permiten hacer lo mismo. 
+
+`str_replace` solo reemplaza la primera ocurrencia del patron mientras que `str_replace_all()` reemplaza todas las ocurrencias
 
 ```{r}
 string6 <- "todos los caballos blancos"
@@ -130,15 +228,24 @@ string6
 
 ```{r}
 #le sacamos los espacios
-gsub(" ", "", string6)
+gsub(pattern = " ", replacement = "", x = string6)
 ```
 
 ```{r}
 #lo llevamos a lenguaje inclusivo
-gsub("os", "xs", string6)
+gsub(pattern = "os", replacement = "xs", x = string6)
 ```
 
-### grepl
+Con stringr
+
+```{r}
+# Reemplazamos la primera ocurrencia
+str_replace(string = string6, pattern = "os", replacement = "xs")
+# Reemplazamos todas las ocurrencias
+str_replace_all(string = string6, pattern = "os", replacement = "xs")
+```
+
+### Detectar patrones en strings
 
 La función `grepl()` nos permite encontrar expresiones dentro de nuestros strings. Nos reporta `VERDADERO` o `FALSO` de acuerdo a si encuentra la expresión que estamos buscando.
 
@@ -147,60 +254,69 @@ string7 <-c("caño", "baño", "ladrillo")
 string7
 ```
 ```{r}
-grepl("ñ",string7)
+grepl(pattern = "ñ",x = string7)
 ```
 
+La funcion `str_detect()` de `stringr` permite hacer lo mismo.
 
-## Ejemplos prácticos
+# Ejemplo práctico
 
-### Ejemplo tiburones
+## Ejemplo tiburones
 
 Vamos a ver un ejemplo a partir de una base pública que nos trae información sobre ataques de tiburones en el mundo en distintos momentos. Cada fila corresponde a un ataque.
 
 ```{r}
-tiburones <- read.csv("https://raw.githubusercontent.com/dmuba/dmuba.github.io/3005a7a5e8c9db5c188ca22a7b9269c94db8ced7/Practicos/TPs%20Entregables/TP02/Shark_Attack_Data.csv")
-tiburones
+tiburones <- read.csv("https://raw.githubusercontent.com/dmuba/dmuba.github.io/3005a7a5e8c9db5c188ca22a7b9269c94db8ced7/Practicos/TPs%20Entregables/TP02/Shark_Attack_Data.csv") %>% select(-c(Case.Number.1,Case.Number.2,original.order, X, X.1))
+head(tiburones,10)
 ```
 
 Vamos a trabajar un poco con la limpieza y la normalización de esta base ya que al juntar datos de distintas fuentes la información no es homogénea por lo que es dificil hacer cualquier tipo de análisis.
+
+### Country
+
+Veamos si existen problemas con la variable del país (Country)
+
+```{r}
+# Creamos una lista con los valores de Country para ver si hay algunos problemas
+tiburones %>% select(Country) %>% # Seleccionamos la variable del pais
+  mutate(Country=as.character(Country)) %>% # Lo convertimos de factor a string
+  arrange(Country) %>% # La ordenamos
+  distinct() %>% # Nos quedamos con los valores unicos
+  as.list() # La convertimos en lista para que sea mas sencilla de ver
+```
+
+Hay varios problemas, pero veamos dos:
+
+1) Hay algunos nombres que no están en mayúscula
+2) Hay algunos nombres que tienen espacios en blanco a izquierda y derecha
+
+Llevamos los nombres a mayúscula
+```{r}
+tiburones <- tiburones %>% mutate(pais=str_to_upper(Country))
+```
+
+Quitamos los espacios en blanco a izquierda y derecha
+
+```{r}
+tiburones <- tiburones %>% mutate(pais=str_trim(pais, side="both"))
+```
 
 ### Date
 
 Vamos a empezar analizando la variable `Date` de nuestro dataset. Primero llevamos esta variable a un pequeño dataset aparte y llevamos la variable al tipo `character` para poder manejarla como un string.
 
 ```{r}
-Date<-data.frame(tiburones[,c('Case.Number','Date')])
-Date$Date<-as.character(Date$Date)
-Date
+Date<-tiburones %>% select(Case.Number, Date) %>% # Seleccionamos las variables de numero de caso y fecha
+                    mutate(Date=as.character(Date)) # Tranformamos la fecha en string
+glimpse(Date)
 ```
 
 Vemos que la variable `Date` viene en muchos casos con la palabra __Reported__ lo cual nos impide que podamos tratar esa expresión como fecha usando las herramientas que vimos en la sección de lubridate. Vamos a ver dos formas de eliminarla, una más directa y una indirecta pero que nos sirve para practicar comandos.
 
 ```{r}
 #forma directa usando gsub
-Date$date_clean1 <- gsub("Reported ", "", Date$Date)
-Date
-```
-
-```{r}
-#forma indirecta
-
-#vemos que casos tienen el térimno "Reported"
-Date$reported<-grepl("Reported",Date$Date)
-Date
-```
-
-```{r}
-#Extraemos los carcteres 10 a 20 del string
-Date$subtr<-substr(Date$Date,10,20)
-Date
-```
-
-
-```{r}
-#si Date tiene la palabra "Reported", entonces reemplzamos ese valor por el extracto que armamos en el paso anterior
-Date$Date[Date$reported==TRUE]<-Date$subtr[Date$reported==TRUE]
-Date
+Date <- Date %>% mutate(date_clean1= str_replace_all(string = Date, pattern =  "Reported ", replacement = ""))
+head(Date,10)
 ```
 
 ### Time
@@ -209,13 +325,13 @@ Vamos ahora a ver el caso de la variable `Time`. Vamos a proceder igual que con 
 
 ```{r}
 #traemos la variable que nos interesa
-Time<-data.frame(tiburones$Time)
+Time <- tiburones %>% select(Time)
 #la llevamos a tipo character para trabajarla como string
-Time$tiburones.Time<-as.character(Time$tiburones.Time)
+Time <- Time %>% mutate(Time=as.character(Time))
 #borro esta entrada porque tiene un dato raro que no nos deja trabajar 
 Time[1545,] <- ""
 #llevamos todo a minúsculas (con otra función que también hace eso)
-Time$tiburones.Time<-tolower(Time$tiburones.Time)
+Time<-Time %>% mutate(Time=tolower(Time))
 Time
 ```
 
@@ -224,49 +340,104 @@ Nuestro objetivo es llevar las horas a una variable categórica con los valores 
 Empecemos trabajando con las entradas que tienen los valores dados en números. Primero vamos a ver que entradas tienen __h__ y vamos a generar una columna con el largo del string.
 
 ```{r}
-Time$tien_h<-grepl("h",Time$tiburones.Time)
-Time$largo<-nchar(Time$tiburones.Time)
+Time <- Time %>% mutate(tiene_h = grepl(pattern = "h",x = Time),
+                        largo=str_length(Time))
 Time
 ```
 
 Ahora creamos una variable que nos va a decir si se trata de un caso con la hora dada en números. Para detectar estos casos, el string tiene que contener la letra __h__ y tener 5 caracteres.
 
 ```{r}
-Time = Time %>% mutate(es_hora = case_when(tien_h==TRUE & largo==5 ~ "si",
-                                           tien_h==FALSE | largo!=5 ~ "no"))
-Time$es_hora = as.character(Time$es_hora)
+Time = Time %>% mutate(es_hora = case_when(tiene_h==TRUE & largo==5 ~ "si",
+                                           tiene_h==FALSE | largo!=5 ~ "no"))
 Time
 ```
 
 Ahora, si se trata de una entrada con el formato de hora, vamos a traer la primera y segunda posición que corresponden a la hora.
 
 ```{r, warning=FALSE}
-Time = Time %>% mutate(hora = case_when(es_hora =="si" ~ substr(Time$tiburones.Time,1,2)))
-Time$hora = as.numeric(Time$hora)
+Time = Time %>% mutate(hora = case_when(es_hora =="si" ~ substr(Time,1,2)),
+                       hora = as.numeric(hora))
 Time
 ```
 
-Ahora vamos a lelvar los valores noméricos continuos a las variables discretas que mencionamos y vamos a llevar las variables en inglés a las variables en castellano.
+Ahora vamos a llevar los valores noméricos continuos a las variables discretas que mencionamos y vamos a llevar las variables en inglés a las variables en castellano.
 
 ```{r}
-Time = Time %>% mutate(hora_estandar = case_when(grepl("afternoon",Time$tiburones.Time)==TRUE ~ "tarde",
-                                                 grepl("day",Time$tiburones.Time)==TRUE ~ "tarde",
-                                                 grepl("night",Time$tiburones.Time)==TRUE ~ "noche",
-                                                 grepl("morning",Time$tiburones.Time)==TRUE ~ "mañana",
+Time = Time %>% mutate(hora_estandar = case_when(grepl("afternoon",Time)==TRUE ~ "tarde",
+                                                 grepl("day",Time)==TRUE ~ "tarde",
+                                                 grepl("night",Time)==TRUE ~ "noche",
+                                                 grepl("morning",Time)==TRUE ~ "mañana",
                                                  hora>5 & hora<12 ~ "mañana",
                                                  hora>11 & hora<19 ~ "tarde",
                                                  hora<6 | hora>18 ~ "noche"))
-Time$hora_estandar[is.na(Time$hora_estandar)] <- "hora indefinida"
+# Reemplazamos los NA por "hora indefinida" 
+Time <- Time %>% replace_na(list(hora_estandar="hora indefinida"))
 Time
 ```
 
+### Fecha con Lubridate
 
+```{r}
+# Seleccionamos algunas variables
+tiburones <- tiburones %>% select(Case.Number, Type,Date, pais)
+# Hacemos la limpieza de la fecha como vimos en la seccion de Stringr
+tiburones <- tiburones %>% mutate(date_clean1= str_replace_all(string = Date, pattern =  "Reported ", replacement = ""))
+glimpse(tiburones)
+```
 
+Transformamos la variable fecha de un string a una fecha
 
+```{r}
+tiburones <- tiburones %>% mutate(fecha= dmy(Date))
+```
 
+El mensaje indica que no pudo convertir a fecha 891 registros.
 
+Extraemos variables de la fecha
 
+```{r}
+tiburones <- tiburones %>% mutate(año = year(fecha), #Obtener el año
+                                  semestre=semester(fecha), # Obtener el semestre
+                                  trimestre=quarter(fecha),#Obtener el trimestre 
+                                  mes=month(fecha,label = TRUE), #Obtener el nombre del mes
+                                  dia=day(fecha),# Obtener el día
+                                  dia_semana=wday(fecha, label = TRUE) #Obtener el nombre del día
+                                  )
 
+glimpse(tiburones)
+```
 
+### Algunos gráficos
 
+Filtramos los registros y nos quedamos con los ataques desde 1800
 
+```{r}
+tiburones_filtro <- tiburones %>% filter(año >=1800)
+```
+
+Veamos la evolución por año de los ataques de tiburones
+
+```{r}
+ggplot(tiburones_filtro, aes(año)) +
+  geom_line(stat = "count") +
+  geom_point(stat='count') +
+  theme_bw() +
+  labs(title='Evolucion ataques de tiburones', x='Año', y='Ataques')
+```
+
+Seleccionamos a dos paises con muchos ataques. Recordemos que habiamos hecho algunos procedimientos de normalización sobre esta variable
+
+```{r}
+tiburones_aus_usa <- tiburones_filtro %>% filter(pais %in% c("AUSTRALIA","USA")) 
+```
+
+Observemos el ciclo anual de ataques de tiburones en estos paises
+
+```{r}
+ggplot(tiburones_aus_usa, aes(mes,color=pais, group=pais)) +
+  geom_line(stat = "count") +
+  geom_point(stat='count') +
+  theme_bw() +
+  labs(title='Ciclo anual ataques de tiburones', x='Mes', y='Ataques')
+```

@@ -1,6 +1,6 @@
 ---
 title: Clase 3
-author: "Barriola, Dotta y Weskler"
+author: "Barriola y Dotta "
 subtitle: Gráficos y Estadística Descriptiva
 date: "3/5/2019"
 output:
@@ -527,7 +527,7 @@ Vamos a realizar algunos gráficos más complejos.
 Queremos mostrar cuáles son las provincias con mayor cantidad de huertas escolares. Utilizamos el dataset `resumen_prov_huertas_escolares` ya que tiene las variables que nos interesa representar: `total_huertas_esc` y `provincia`. Usamos un gráfico de barras y ordenamos las provincias de mayor a menor cantidad de huertas en total.
 
 ```{r}
-ggplot(resumen_prov_huertas_escolares, aes(x=reorder(PROVINCIA, -total_huertas_esc), y=total_huertas_esc,fill=PROVINCIA)) +
+  ggplot(resumen_prov_huertas_escolares, aes(x=reorder(PROVINCIA, -total_huertas_esc), y=total_huertas_esc,fill=PROVINCIA)) +
   geom_bar(stat='identity') + 
   theme_bw() +
   theme(legend.position = 'none', axis.text.x = element_text(angle = 90)) +
