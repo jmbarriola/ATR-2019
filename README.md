@@ -30,7 +30,9 @@ Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 
 ### Clase 5
 
-#### Manejo de Strings: Open Refine y expresiones regulares sencillas
+#### Manejo de Strings (Stringr) y Fechas (Lubridate)
+
+- [Notebook](Clase 5/clase5_strings_y_fechas.nb.html)
 
 ### Clase 7
 
