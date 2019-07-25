@@ -1,6 +1,8 @@
 ## ATR-2019
 Repositorio del curso Aprendiendo a Trabajar con R (año 2019)
 
+Autores: Juan Manuel Barriola y Milena Dotta
+
 ### Clase 1
 #### Repaso de lenguaje base de R y paquete tidyverse
 
