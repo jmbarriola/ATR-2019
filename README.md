@@ -39,3 +39,6 @@ Autores: Juan Manuel Barriola y Milena Dotta
 ### Clase 7
 
 #### Armado de presentaciones con R markdown
+
+- [Notebook](Clase 7/r_notebooks.nb.html)
+- [Codigo](Clase 7/r_notebooks.Rmd)
