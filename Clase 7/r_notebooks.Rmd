@@ -1,0 +1,251 @@
+---
+title: Clase 7
+author: "Barriola y Dotta "
+subtitle: R Notebooks
+date: "30/7/2019"
+output:
+  html_notebook: 
+    toc: true
+    toc_float: true 
+---
+
+Los documentos de R llamados R Notebooks y R Markdowns permiten presentar los resultados del procedimiento, el código y texto normal.
+
+# Configuracion inicial
+
+En la primera parte del documento escribimos:
+
+1) title: titulo del documento
+
+2) author: autores del documento
+
+3) subtitle: subtitulo del documento
+
+4) date: fecha
+
+5) Output: se pueden poner varias opciones. En este caso estamos generando un archivo html con html_notebook y colocando un tabla de contenidos (table of contents o toc) e indicando que esa tabla debe seguir apareciendo cuando nos movemos en el documento (toc_float: true).
+Se puede generar ademas archivos de Word y PDF.
+
+# Titulos
+
+El # sirve para indicar titulos. Cuantos mas simbolos # pongamos menor será la jerarquía del título. Esto se ve reflejado en el tamaño de la letra y la posición del título en el índice.
+
+# Titulo 1
+## Titulo 2
+### Titulo 3
+#### Titulo 4
+
+# Estilos de letra
+
+Para darle estilos a las letras usamos:
+
+Un asterico al principio y final de la frase o palabra para que sea *cursiva*
+
+Dos astericos al principio y final de la frase o palabra para que sea **negrita**
+
+Una tilde invertida \` al principio y final de la frase o palabra para que sea en formato `codigo`
+
+# Enumeracion
+
+Podemos enumerar cosas en el siguiente formato:
+
+1) Iniciar R
+
+2) Seleccionar R Notebook
+
+3) Escribir: 
+
+    a) Codigo
+  
+    b) Texto normal
+
+Tambien podemos realizar una lista de items con el siguiente formato:
+
+Algunas librerias que vimos en este curso son:
+
+* `tidyverse`
+
+    * `dplyr`
+
+    * `tidyr`
+
+    * `ggplot2`
+
+* `stringr`
+
+* `lubridate`
+
+# Hipervinculos
+
+Podemos incluir hipervinculos de la siguiente forma: `[vinculo](pagina web)` . Por ejemplo este es el [vinculo](http://rmarkdown.rstudio.com) a la página de R Markdown
+
+# Insertar codigo
+
+Existen dos formas de insertar código.
+
+## Chunk de codigo
+
+Nos permite generar todo un fragmento del documento donde lo que escribamos es interpretado como código. Podemos elegir que mostramos del código y de la ejecución del mismo.
+
+En este caso estamos mostrando el código y la ejecución del mismo.
+
+```{r}
+# Esto es codigo. Es igual a los scripts
+# Generamos variables
+nombre <- 'Athena'
+nombre
+# Edad en años
+edad <- 7
+edad
+```
+
+## Codigo inline
+
+También podemos escribir código dentro de las líneas de texto normal. Esto se suele usar para introducir variables dentro del texto. Por ejemplo:
+
+La gata se llama `r nombre`, tiene `r edad` años o `r edad * 12` meses.
+
+
+# Ejemplo: Tiburones
+
+Vamos a realizar un breve ejemplo haciendo un analisis del dataset de tiburones
+
+#### Carga de librerias
+
+```{r}
+library(tidyverse) #siempre lo tenemos a mano
+library(stringr) #para trabajar con strings
+```
+
+Vemos que surge un mensaje asociado a la carga de las librerias. Escribiendo `message=FALSE` en el comienzo del chunk evitamos que salga el mensaje.
+
+```{r, message=FALSE}
+library(tidyverse) #siempre lo tenemos a mano
+library(stringr) #para trabajar con strings
+library(lubridate) #para trabajar con fechas 
+```
+
+## Lectura de la base
+
+Es una base pública que contiene información sobre ataques de tiburones en el mundo en distintos momentos. Cada fila corresponde a un ataque.
+
+```{r}
+tiburones <- read.csv("https://raw.githubusercontent.com/dmuba/dmuba.github.io/3005a7a5e8c9db5c188ca22a7b9269c94db8ced7/Practicos/TPs%20Entregables/TP02/Shark_Attack_Data.csv") %>% select(-c(Case.Number.1,Case.Number.2,original.order, X, X.1))
+head(tiburones,10)
+```
+
+## Transformaciones de datos
+
+Realizamos algunas transformaciones sobre los datos:
+
+1. **LIMPIEZA DE LA VARIABLE DATE**
+
+La variable de fecha en algunos casos viene acompañada por la palabra "Reported". Es necesario eliminarla para poder convertir esta variable a tipo fecha.
+
+```{r}
+# Seleccionamos algunas variables
+tiburones <- tiburones %>% select(Case.Number, Type,Date, Country)
+# Quitamos la palabra "Reported" de la columna de fecha
+tiburones <- tiburones %>% mutate(date_clean1= str_replace_all(string = Date, pattern =  "Reported ", replacement = ""))
+glimpse(tiburones)
+```
+
+Si no queremos que se vea el código y sólo mostrar el resultado, escribimos `echo=FALSE` en el comienzo del chunk para ocultar el código.
+
+```{r,echo=FALSE}
+# Seleccionamos algunas variables
+tiburones <- tiburones %>% select(Case.Number, Type,Date, Country)
+# Quitamos la palabra "Reported" de la columna de fecha
+tiburones <- tiburones %>% mutate(date_clean1= str_replace_all(string = Date, pattern =  "Reported ", replacement = ""))
+glimpse(tiburones)
+```
+
+2. **TRANSFORMAR LA VARIABLE DATE A TIPO FECHA**
+
+Transformamos la variable fecha de un string a una fecha
+
+```{r}
+tiburones <- tiburones %>% mutate(fecha= dmy(date_clean1))
+```
+
+El mensaje indica que no pudo convertir a fecha 889 registros.
+
+¿Qué pasa si no queremos que aparezca este mensaje en el documento? Probemos eliminar el mensaje con `echo=FALSE`
+
+```{r,echo=FALSE}
+tiburones <- tiburones %>% mutate(fecha= dmy(date_clean1))
+```
+
+Ahora el código no aparece pero el mensaje sigue apareciendo. Esto se debe a que es un mensaje de advertencia y para evitar que aparezca debemos escribir `warning=FALSE` en el comienzo del chunk.
+
+```{r,warning=FALSE}
+tiburones <- tiburones %>% mutate(fecha= dmy(date_clean1))
+```
+
+Si escribimos `warning=FALSE` y `echo=FALSE` en el comienzo del chunk no va a aparecer ni el codigo ni el mensaje de advertencia.
+
+```{r,echo=FALSE,warning=FALSE}
+tiburones <- tiburones %>% mutate(fecha= dmy(date_clean1))
+```
+
+3. **EXTRACCION DE VARIABLE DE LA FECHA**
+
+Extraemos variables de la fecha
+
+```{r}
+tiburones <- tiburones %>% mutate(año = year(fecha), #Obtener el año
+                                  semestre=semester(fecha), # Obtener el semestre
+                                  trimestre=quarter(fecha),#Obtener el trimestre 
+                                  mes=month(fecha,label = TRUE), #Obtener el nombre del mes
+                                  dia=day(fecha),# Obtener el día
+                                  dia_semana=wday(fecha, label = TRUE) #Obtener el nombre del día
+                                  )
+
+glimpse(tiburones)
+```
+
+## Consultas sobre la base
+
+Vamos a generar una tabla con los diez paises con más ataques de tiburones
+
+```{r}
+paises_mas_ataques <- tiburones %>% group_by(Country) %>% summarise(ataques=n()) %>% arrange(desc(ataques))
+paises_mas_ataques
+```
+
+Recordemos que si no queremos mostrar el código escribimos `echo=FALSE` en el comienzo del chunk.
+
+```{r, echo=FALSE}
+paises_mas_ataques <- tiburones %>% group_by(Country) %>% summarise(ataques=n()) %>% arrange(desc(ataques))
+paises_mas_ataques
+```
+
+El país con mayor cantidad de ataques es `r paises_mas_ataques[[1,1]]` con `r paises_mas_ataques[[1,2]]`.
+
+## Graficos: Evolucion de los ataques
+
+Filtramos los registros y nos quedamos con los ataques desde 1800
+
+```{r, echo=FALSE}
+tiburones_filtro <- tiburones %>% filter(año >=1800)
+```
+
+Veamos la evolución por año de los ataques de tiburones
+
+```{r, echo=FALSE}
+ggplot(tiburones_filtro, aes(año)) +
+  geom_line(stat = "count") +
+  geom_point(stat='count') +
+  theme_bw() +
+  labs(title='Evolucion ataques de tiburones', x='Año', y='Ataques')
+```
+
+En este caso, no se ve el codigo porque escribimos `echo=FALSE` en el comienzo del chunk. Si lo quitamos vemos el codigo y su resultado.
+
+```{r}
+ggplot(tiburones_filtro, aes(año)) +
+  geom_line(stat = "count") +
+  geom_point(stat='count') +
+  theme_bw() +
+  labs(title='Evolucion ataques de tiburones', x='Año', y='Ataques')
+```

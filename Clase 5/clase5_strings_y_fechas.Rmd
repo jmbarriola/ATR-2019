@@ -45,7 +45,7 @@ Con la función dmy_hms podemos convertir este string a una fecha: estamos indic
 fecha  <- dmy_hms(fecha)
 fecha
 # Clase de dato
-typeof(fecha)
+class(fecha)
 ```
 Muchas funciones de lubridate operan con esta misma lógica
 
@@ -294,12 +294,18 @@ Hay varios problemas, pero veamos dos:
 Llevamos los nombres a mayúscula
 ```{r}
 tiburones <- tiburones %>% mutate(pais=str_to_upper(Country))
+head(tiburones, 10)
 ```
 
 Quitamos los espacios en blanco a izquierda y derecha
 
 ```{r}
 tiburones <- tiburones %>% mutate(pais=str_trim(pais, side="both"))
+tiburones %>% select(pais) %>% # Seleccionamos la variable del pais
+  #mutate(Country=as.character(Country)) %>% # Lo convertimos de factor a string
+  arrange(pais) %>% # La ordenamos
+  distinct() %>% # Nos quedamos con los valores unicos
+  as.list() # La convertimos en lista para que sea mas sencilla de ver
 ```
 
 ### Date
